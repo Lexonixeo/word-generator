@@ -46,6 +46,10 @@ public class Table {
     }
 
     public Token getRandomToken(Token before) {
+        if (!table.containsKey(before)) {
+            throw new NoTokenException("В текущей модели отсутствует продолжение для токена " + before);
+        }
+
         RandomCollection<Token> rc = new RandomCollection<>(random);
         for (Token t : table.get(before).keySet()) {
             rc.add(table.get(before).get(t), t);

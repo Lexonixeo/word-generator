@@ -7,7 +7,11 @@ public class Tokenizer {
     public static final String WORDS_ALPHABET = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя";
 
     public static Token getLastToken(String s, TokenizerMode mode) {
-        return new SimpleToken("");
+        StringBuilder sr = new StringBuilder(s);
+        sr.reverse();
+        ArrayList<Token> rt = tokenize(sr.toString(), mode);
+        StringBuilder firstTokenString = new StringBuilder(rt.getFirst().toString());
+        return new SimpleToken(firstTokenString.reverse().toString());
     }
 
     public static ArrayList<Token> tokenize(String s, TokenizerMode mode) {
