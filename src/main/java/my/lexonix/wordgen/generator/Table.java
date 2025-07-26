@@ -57,16 +57,13 @@ public class Table {
         return rc.next();
     }
 
-    public void addPair(Token before, Token token) {
-        if (!table.containsKey(before)) {
-            table.put(before, new HashMap<>());
-            sumTable.put(before, 0);
+    public void updateTable(String textPath) {
+        ArrayList<String> strings = Utility.readFile(path);
+        String s = Utility.arrToString(strings);
+        ArrayList<Token> tokens = Tokenizer.tokenize(s, mode);
+        for (int i = 1; i < tokens.size(); i++) {
+            addPair(tokens.get(i-1), tokens.get(i));
         }
-        if (!table.get(before).containsKey(token)) {
-            table.get(before).put(token, 0);
-        }
-        table.get(before).put(token, table.get(before).get(token) + 1);
-        sumTable.put(before, sumTable.get(before) + 1);
     }
 
     public void saveTable() {
@@ -89,6 +86,18 @@ public class Table {
             strings.add(Utility.toIntString(ints));
         }
         Utility.saveFile(path, strings);
+    }
+
+    private void addPair(Token before, Token token) {
+        if (!table.containsKey(before)) {
+            table.put(before, new HashMap<>());
+            sumTable.put(before, 0);
+        }
+        if (!table.get(before).containsKey(token)) {
+            table.get(before).put(token, 0);
+        }
+        table.get(before).put(token, table.get(before).get(token) + 1);
+        sumTable.put(before, sumTable.get(before) + 1);
     }
 
     private static HashMap<Token, Integer> countSumTable(HashMap<Token, HashMap<Token, Integer>> table) {

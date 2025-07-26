@@ -6,7 +6,7 @@ import my.lexonix.wordgen.generator.Table;
 public class Main {
     public static void main(String[] args) {
         Table table = new Table("data/tables/ukrf3.txt");
-        // TableGenerator.updateTable(table, "data/texts/funcmath.txt");
+        // table.updateTable("data/texts/funcmath.txt");
         // table.saveTable();
         SentenceGenerator.saveSentence(table, "data/sentence.txt", 1000, "cтатья ");
     }
