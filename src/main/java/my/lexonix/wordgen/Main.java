@@ -8,6 +8,6 @@ public class Main {
         Table table = new Table("data/tables/ukrf3.txt");
         // table.updateTable("data/texts/funcmath.txt");
         // table.saveTable();
-        SentenceGenerator.saveSentence(table, "data/sentence.txt", 1000, "cтатья ");
+        SentenceGenerator.saveSentence(table, "data/sentence.txt", 100, "статья ");
     }
 }

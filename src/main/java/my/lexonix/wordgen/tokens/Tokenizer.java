@@ -27,7 +27,7 @@ public class Tokenizer {
     public static String getSeparator(TokenizerMode mode) {
         return switch (mode) {
             case WORDS -> " ";
-            case LETTERS, QUADRUPLE, TRIPLE, DOUBLE -> "";
+            case LETTERS, DOUBLE, TRIPLE, QUADRUPLE -> "";
         };
     }
 
