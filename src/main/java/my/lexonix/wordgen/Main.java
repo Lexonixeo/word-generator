@@ -7,6 +7,6 @@ public class Main {
         Table table = new Table("data/tables/ukrf3.txt", TRIPLE);
         TableGenerator.updateTable(table, "data/texts/ukrf.txt");
         table.saveTable();
-        SentenceGenerator.makeSentence(table, "data/sentence.txt", 100);
+        SentenceGenerator.saveSentence(table, "data/sentence.txt", 100);
     }
 }
