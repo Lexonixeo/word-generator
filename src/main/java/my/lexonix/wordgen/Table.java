@@ -50,11 +50,11 @@ public class Table {
             ArrayList<Integer> ints = new ArrayList<>();
 
             sb.append(firstToken);
-            sb.append(Letter.SEPARATOR);
+            sb.append(Word.SEPARATOR);
 
             for (Token t : table.get(firstToken).keySet()) {
                 sb.append(t);
-                sb.append(Letter.SEPARATOR);
+                sb.append(Word.SEPARATOR);
                 ints.add(table.get(firstToken).get(t));
             }
 
@@ -84,7 +84,7 @@ public class Table {
         for (int i = 0; i < strings.size(); i += 2) {
             String s = strings.get(i);
             ArrayList<Integer> ints = readIntArray(strings.get(i+1));
-            ArrayList<Token> tokens = Letter.getLetters(s);
+            ArrayList<Token> tokens = Word.getWords(s);
             Token firstToken = tokens.getFirst();
             table.put(firstToken, new HashMap<>());
             for (int j = 1; j < tokens.size(); j++) {

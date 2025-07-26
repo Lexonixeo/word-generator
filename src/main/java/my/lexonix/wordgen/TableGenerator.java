@@ -6,8 +6,9 @@ public class TableGenerator {
     public static void updateTable(Table table, String path) {
         ArrayList<String> strings = Table.readFile(path);
         String s = arrToString(strings);
-        for (int i = 1; i < s.length(); i++) {
-            table.addPair(new Letter(s.charAt(i-1)), new Letter(s.charAt(i)));
+        ArrayList<Token> tokens = Word.getWords(s);
+        for (int i = 1; i < tokens.size(); i++) {
+            table.addPair(tokens.get(i-1), tokens.get(i));
         }
     }
 

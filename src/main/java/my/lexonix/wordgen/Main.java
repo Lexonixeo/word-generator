@@ -11,6 +11,6 @@ public class Main {
 
         table.saveTable();
 
-        SentenceGenerator.makeSentence(table, "sentence.txt", new Letter("Ж"), 700);
+        SentenceGenerator.makeSentence(table, "sentence.txt", new Word("Я"), 100);
     }
 }
