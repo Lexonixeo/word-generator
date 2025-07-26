@@ -72,12 +72,11 @@ public class Tokenizer {
         ArrayList<Token> words = new ArrayList<>();
         StringBuilder newWord = new StringBuilder();
         for (int i = 0; i < sentence.length(); i++) {
-            if (!WORDS_ALPHABET.contains(String.valueOf(sentence.charAt(i))) && !newWord.isEmpty()) {
-                words.add(new Word(newWord.toString()));
-                newWord.delete(0, newWord.length());
-                continue;
-            }
             if (!WORDS_ALPHABET.contains(String.valueOf(sentence.charAt(i)))) {
+                if (!newWord.isEmpty()) {
+                    words.add(new Word(newWord.toString()));
+                    newWord.delete(0, newWord.length());
+                }
                 continue;
             }
             newWord.append(sentence.charAt(i));
