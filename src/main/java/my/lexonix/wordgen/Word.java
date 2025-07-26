@@ -25,6 +25,9 @@ public class Word extends Token {
                 newWord.delete(0, newWord.length());
                 continue;
             }
+            if (!Main.ALPHABET.contains(String.valueOf(sentence.charAt(i)))) {
+                continue;
+            }
             newWord.append(sentence.charAt(i));
         }
         if (!newWord.isEmpty()) {
