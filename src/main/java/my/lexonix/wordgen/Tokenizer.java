@@ -1,6 +1,7 @@
 package my.lexonix.wordgen;
 
 import java.util.ArrayList;
+import static my.lexonix.wordgen.TokenizerMode.*;
 
 public class Tokenizer {
     private static final String LETTERS_ALPHABET = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'!\"#$%&\\'()*+,-./:;<=>?@[\\\\]^_`{|}~' 0123456789";
@@ -9,7 +10,12 @@ public class Tokenizer {
     public static final String SEPARATOR = "";
 
     public static ArrayList<Token> tokenize(String s) {
-        return getDoubleLetters(s);
+        return switch (Main.MODE) {
+            case WORDS -> getWords(s);
+            case LETTERS -> getLetters(s);
+            case DOUBLE -> getDoubleLetters(s);
+            case TRIPLE -> getTripleLetters(s);
+        };
     }
 
     private static ArrayList<Token> getLetters(String sentence) {

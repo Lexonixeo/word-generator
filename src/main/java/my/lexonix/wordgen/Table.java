@@ -18,9 +18,14 @@ public class Table {
         path = "table.txt";
     }
 
-    public Table(String path) {
-        table = readTable(path);
-        sumTable = countSumTable(table);
+    public Table(String path, boolean copy) {
+        if (copy) {
+            table = readTable(path);
+            sumTable = countSumTable(table);
+        } else {
+            table = new HashMap<>();
+            sumTable = new HashMap<>();
+        }
         this.path = path;
     }
 
@@ -50,11 +55,6 @@ public class Table {
         }
         table.get(before).put(token, table.get(before).get(token) + 1);
         sumTable.put(before, sumTable.get(before) + 1);
-
-        if (!table.containsKey(token)) {
-            table.put(token, new HashMap<>());
-            sumTable.put(token, 0);
-        }
     }
 
     public void saveTable() {
