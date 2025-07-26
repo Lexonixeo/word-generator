@@ -7,16 +7,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class Table {
-    private HashMap<Token, HashMap<Token, Integer>> table;
-    private HashMap<Token, Integer> sumTable;
+    private final HashMap<Token, HashMap<Token, Integer>> table;
+    private final HashMap<Token, Integer> sumTable;
     private final String path;
     private final SecureRandom random = new SecureRandom();
-
-    public Table() {
-        table = new HashMap<>();
-        sumTable = new HashMap<>();
-        path = "table.txt";
-    }
 
     public Table(String path, boolean copy) {
         if (copy) {

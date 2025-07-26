@@ -1,7 +1,6 @@
 package my.lexonix.wordgen;
 
 import java.util.ArrayList;
-import static my.lexonix.wordgen.TokenizerMode.*;
 
 public class Tokenizer {
     private static final String LETTERS_ALPHABET = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'!\"#$%&\\'()*+,-./:;<=>?@[\\\\]^_`{|}~' 0123456789";

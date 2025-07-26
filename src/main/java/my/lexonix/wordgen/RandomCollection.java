@@ -9,10 +9,6 @@ public class RandomCollection<E> {
     private final Random random;
     private double total = 0;
 
-    public RandomCollection() {
-        this(new Random());
-    }
-
     public RandomCollection(Random random) {
         this.random = random;
     }
