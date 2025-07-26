@@ -1,4 +1,4 @@
-package my.lexonix.wordgen;
+package my.lexonix.wordgen.tokens;
 
 public class Word extends Token {
     public Word(String word) {

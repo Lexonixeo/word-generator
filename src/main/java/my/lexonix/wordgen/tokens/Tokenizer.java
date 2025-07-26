@@ -1,4 +1,4 @@
-package my.lexonix.wordgen;
+package my.lexonix.wordgen.tokens;
 
 import java.util.ArrayList;
 
@@ -6,7 +6,9 @@ public class Tokenizer {
     private static final String LETTERS_ALPHABET = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'!\"#$%&\\'()*+,-./:;<=>?@[\\\\]^_`{|}~' 0123456789";
     public static final String WORDS_ALPHABET = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя";
 
-    public static final String SEPARATOR = "";
+    public static Token getLastToken(String s, TokenizerMode mode) {
+        return new SimpleToken("");
+    }
 
     public static ArrayList<Token> tokenize(String s, TokenizerMode mode) {
         return switch (mode) {
@@ -14,6 +16,14 @@ public class Tokenizer {
             case LETTERS -> getLetters(s);
             case DOUBLE -> getDoubleLetters(s);
             case TRIPLE -> getTripleLetters(s);
+            case QUADRUPLE -> getQuadrupleLetters(s);
+        };
+    }
+    
+    public static String getSeparator(TokenizerMode mode) {
+        return switch (mode) {
+            case WORDS -> " ";
+            case LETTERS, QUADRUPLE, TRIPLE, DOUBLE -> "";
         };
     }
 
@@ -41,6 +51,15 @@ public class Tokenizer {
         ArrayList<Token> letters = getLetters(sentence);
         for (int i = 0; i < letters.size() - 2; i += 3) {
             tokens.add(new SimpleToken(letters.get(i).toString() + letters.get(i+1).toString() + letters.get(i+2).toString()));
+        }
+        return tokens;
+    }
+
+    private static ArrayList<Token> getQuadrupleLetters(String sentence) {
+        ArrayList<Token> tokens = new ArrayList<>();
+        ArrayList<Token> letters = getLetters(sentence);
+        for (int i = 0; i < letters.size() - 3; i += 4) {
+            tokens.add(new SimpleToken(letters.get(i).toString() + letters.get(i+1).toString() + letters.get(i+2).toString() + letters.get(i+3).toString()));
         }
         return tokens;
     }

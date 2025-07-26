@@ -1,9 +1,14 @@
-package my.lexonix.wordgen;
+package my.lexonix.wordgen.generator;
 
-import java.io.*;
+import my.lexonix.wordgen.tokens.Token;
+import my.lexonix.wordgen.tokens.Tokenizer;
+import my.lexonix.wordgen.tokens.TokenizerMode;
+import my.lexonix.wordgen.utility.Pair;
+import my.lexonix.wordgen.utility.RandomCollection;
+import my.lexonix.wordgen.utility.Utility;
+
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class Table {
@@ -62,23 +67,24 @@ public class Table {
 
     public void saveTable() {
         ArrayList<String> strings = new ArrayList<>();
+        strings.add(mode.name());
         for (Token firstToken : table.keySet()) {
             StringBuilder sb = new StringBuilder();
             ArrayList<Integer> ints = new ArrayList<>();
 
             sb.append(firstToken);
-            sb.append(Tokenizer.SEPARATOR);
+            sb.append(Tokenizer.getSeparator(mode));
 
             for (Token t : table.get(firstToken).keySet()) {
                 sb.append(t);
-                sb.append(Tokenizer.SEPARATOR);
+                sb.append(Tokenizer.getSeparator(mode));
                 ints.add(table.get(firstToken).get(t));
             }
 
             strings.add(sb.toString());
-            strings.add(toIntString(ints));
+            strings.add(Utility.toIntString(ints));
         }
-        saveFile(path, strings);
+        Utility.saveFile(path, strings);
     }
 
     private static HashMap<Token, Integer> countSumTable(HashMap<Token, HashMap<Token, Integer>> table) {
@@ -97,7 +103,7 @@ public class Table {
 
     private static Pair<HashMap<Token, HashMap<Token, Integer>>, TokenizerMode> readTable(String path) {
         HashMap<Token, HashMap<Token, Integer>> table = new HashMap<>();
-        ArrayList<String> strings = readFile(path);
+        ArrayList<String> strings = Utility.readFile(path);
         TokenizerMode mode = switch(strings.getFirst()) {
             case "WORDS" -> TokenizerMode.WORDS;
             case "LETTERS" -> TokenizerMode.LETTERS;
@@ -107,7 +113,7 @@ public class Table {
         };
         for (int i = 1; i < strings.size(); i += 2) {
             String s = strings.get(i);
-            ArrayList<Integer> ints = readIntArray(strings.get(i+1));
+            ArrayList<Integer> ints = Utility.readIntArray(strings.get(i+1));
             ArrayList<Token> tokens = Tokenizer.tokenize(s, mode);
             Token firstToken = tokens.getFirst();
             table.put(firstToken, new HashMap<>());
@@ -116,44 +122,6 @@ public class Table {
             }
         }
         return new Pair<>(table, mode);
-    }
-
-    private static String toIntString(ArrayList<Integer> ints) {
-        return ints.toString().replace("[", "").replace("]", "").replace(",", "");
-    }
-
-    public static void saveFile(String path, ArrayList<String> arr) {
-        try {
-            FileWriter writer = new FileWriter(path);
-            for(String str: arr) {
-                writer.write(str + System.lineSeparator());
-            }
-            writer.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static ArrayList<Integer> readIntArray(String s) {
-        ArrayList<String> arrayList = new ArrayList<>    (Arrays.asList(s.split(" ")));
-        ArrayList<Integer> favList = new ArrayList<>();
-        for(String fav:arrayList){
-            favList.add(Integer.parseInt(fav.trim()));
-        }
-        return favList;
-    }
-
-    public static ArrayList<String> readFile(String path) {
-        ArrayList<String> arr = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-            String sCurrentLine;
-            while ((sCurrentLine = br.readLine()) != null) {
-                arr.add(sCurrentLine);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return arr;
     }
 }
 

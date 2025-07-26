@@ -1,4 +1,4 @@
-package my.lexonix.wordgen;
+package my.lexonix.wordgen.utility;
 
 import java.util.NavigableMap;
 import java.util.Random;

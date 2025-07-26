@@ -1,8 +1,9 @@
-package my.lexonix.wordgen;
+package my.lexonix.wordgen.tokens;
 
 public enum TokenizerMode {
     WORDS,
     LETTERS,
     DOUBLE,
-    TRIPLE
+    TRIPLE,
+    QUADRUPLE
 }

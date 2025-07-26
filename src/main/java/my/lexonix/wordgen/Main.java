@@ -1,12 +1,13 @@
 package my.lexonix.wordgen;
 
-import static my.lexonix.wordgen.TokenizerMode.*;
+import my.lexonix.wordgen.generator.SentenceGenerator;
+import my.lexonix.wordgen.generator.Table;
 
 public class Main {
     public static void main(String[] args) {
-        Table table = new Table("data/tables/ukrf3.txt", TRIPLE);
-        TableGenerator.updateTable(table, "data/texts/ukrf.txt");
-        table.saveTable();
-        SentenceGenerator.saveSentence(table, "data/sentence.txt", 100);
+        Table table = new Table("data/tables/wap1.txt");
+        // TableGenerator.updateTable(table, "data/texts/funcmath.txt");
+        // table.saveTable();
+        SentenceGenerator.saveSentence(table, "data/sentence.txt", 1000);
     }
 }

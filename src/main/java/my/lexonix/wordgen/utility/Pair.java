@@ -1,4 +1,4 @@
-package my.lexonix.wordgen;
+package my.lexonix.wordgen.utility;
 
 import java.io.Serial;
 import java.io.Serializable;
