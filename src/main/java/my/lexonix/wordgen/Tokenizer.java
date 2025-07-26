@@ -25,7 +25,7 @@ public class Tokenizer {
     private static ArrayList<Token> getDoubleLetters(String sentence) {
         ArrayList<Token> tokens = new ArrayList<>();
         ArrayList<Token> letters = getLetters(sentence);
-        for (int i = 0; i < letters.size() - 1; i += 3) {
+        for (int i = 0; i < letters.size() - 1; i += 2) {
             tokens.add(new SimpleToken(letters.get(i).toString() + letters.get(i+1).toString()));
         }
         return tokens;

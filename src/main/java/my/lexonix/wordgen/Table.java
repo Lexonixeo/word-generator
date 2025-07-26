@@ -10,6 +10,7 @@ public class Table {
     private HashMap<Token, HashMap<Token, Integer>> table;
     private HashMap<Token, Integer> sumTable;
     private final String path;
+    private final SecureRandom random = new SecureRandom();
 
     public Table() {
         table = new HashMap<>();
@@ -24,7 +25,7 @@ public class Table {
     }
 
     public Token getRandomFirstToken() {
-        RandomCollection<Token> rc = new RandomCollection<>(new SecureRandom());
+        RandomCollection<Token> rc = new RandomCollection<>(random);
         for (Token t : table.keySet()) {
             rc.add(sumTable.get(t), t);
         }
@@ -32,7 +33,7 @@ public class Table {
     }
 
     public Token getRandomToken(Token before) {
-        RandomCollection<Token> rc = new RandomCollection<>(new SecureRandom());
+        RandomCollection<Token> rc = new RandomCollection<>(random);
         for (Token t : table.get(before).keySet()) {
             rc.add(table.get(before).get(t), t);
         }
@@ -45,10 +46,15 @@ public class Table {
             sumTable.put(before, 0);
         }
         if (!table.get(before).containsKey(token)) {
-            table.get(before).put(token, 0); // мб баг, надеюсь там хэшмап по ссылке
+            table.get(before).put(token, 0);
         }
         table.get(before).put(token, table.get(before).get(token) + 1);
         sumTable.put(before, sumTable.get(before) + 1);
+
+        if (!table.containsKey(token)) {
+            table.put(token, new HashMap<>());
+            sumTable.put(token, 0);
+        }
     }
 
     public void saveTable() {
