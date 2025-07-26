@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 public class SentenceGenerator {
     public static void makeSentence(Table table, String path, Letter firstLetter, int length) {
-        SecureRandom rand = new SecureRandom();
         StringBuilder sb = new StringBuilder();
 
         Token nextToken = firstLetter;

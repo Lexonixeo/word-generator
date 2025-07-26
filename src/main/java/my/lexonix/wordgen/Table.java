@@ -111,8 +111,8 @@ public class Table {
     }
 
     private static ArrayList<Integer> readIntArray(String s) {
-        ArrayList<String> arrayList = new ArrayList<String>    (Arrays.asList(s.split(" ")));
-        ArrayList<Integer> favList = new ArrayList<Integer>();
+        ArrayList<String> arrayList = new ArrayList<>    (Arrays.asList(s.split(" ")));
+        ArrayList<Integer> favList = new ArrayList<>();
         for(String fav:arrayList){
             favList.add(Integer.parseInt(fav.trim()));
         }
@@ -120,7 +120,7 @@ public class Table {
     }
 
     public static ArrayList<String> readFile(String path) {
-        ArrayList<String> arr = new ArrayList<String>();
+        ArrayList<String> arr = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String sCurrentLine;
             while ((sCurrentLine = br.readLine()) != null) {
