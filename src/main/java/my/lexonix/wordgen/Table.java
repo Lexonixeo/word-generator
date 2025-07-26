@@ -23,6 +23,14 @@ public class Table {
         this.path = path;
     }
 
+    public Token getRandomFirstToken() {
+        RandomCollection<Token> rc = new RandomCollection<>(new SecureRandom());
+        for (Token t : table.keySet()) {
+            rc.add(sumTable.get(t), t);
+        }
+        return rc.next();
+    }
+
     public Token getRandomToken(Token before) {
         RandomCollection<Token> rc = new RandomCollection<>(new SecureRandom());
         for (Token t : table.get(before).keySet()) {
@@ -50,11 +58,11 @@ public class Table {
             ArrayList<Integer> ints = new ArrayList<>();
 
             sb.append(firstToken);
-            sb.append(Word.SEPARATOR);
+            sb.append(Tokenizer.SEPARATOR);
 
             for (Token t : table.get(firstToken).keySet()) {
                 sb.append(t);
-                sb.append(Word.SEPARATOR);
+                sb.append(Tokenizer.SEPARATOR);
                 ints.add(table.get(firstToken).get(t));
             }
 
@@ -84,7 +92,7 @@ public class Table {
         for (int i = 0; i < strings.size(); i += 2) {
             String s = strings.get(i);
             ArrayList<Integer> ints = readIntArray(strings.get(i+1));
-            ArrayList<Token> tokens = Word.getWords(s);
+            ArrayList<Token> tokens = Tokenizer.tokenize(s);
             Token firstToken = tokens.getFirst();
             table.put(firstToken, new HashMap<>());
             for (int j = 1; j < tokens.size(); j++) {
