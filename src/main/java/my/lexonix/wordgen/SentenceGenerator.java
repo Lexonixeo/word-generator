@@ -6,10 +6,11 @@ public class SentenceGenerator {
     public static void makeSentence(Table table, String path, int length) {
         StringBuilder sb = new StringBuilder();
 
+        /*
         sb.append("Стат");
         Token nextToken = new SimpleToken("ья ");
-
-        //Token nextToken = table.getRandomFirstToken();
+         */
+        Token nextToken = table.getRandomFirstToken();
         sb.append(nextToken);
         sb.append(Tokenizer.SEPARATOR);
 

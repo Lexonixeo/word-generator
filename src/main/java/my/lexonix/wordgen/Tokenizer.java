@@ -8,8 +8,8 @@ public class Tokenizer {
 
     public static final String SEPARATOR = "";
 
-    public static ArrayList<Token> tokenize(String s) {
-        return switch (Main.MODE) {
+    public static ArrayList<Token> tokenize(String s, TokenizerMode mode) {
+        return switch (mode) {
             case WORDS -> getWords(s);
             case LETTERS -> getLetters(s);
             case DOUBLE -> getDoubleLetters(s);

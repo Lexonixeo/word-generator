@@ -11,16 +11,25 @@ public class Table {
     private final HashMap<Token, Integer> sumTable;
     private final String path;
     private final SecureRandom random = new SecureRandom();
+    private final TokenizerMode mode;
 
-    public Table(String path, boolean copy) {
-        if (copy) {
-            table = readTable(path);
-            sumTable = countSumTable(table);
-        } else {
-            table = new HashMap<>();
-            sumTable = new HashMap<>();
-        }
+    public Table(String path) {
+        Pair<HashMap<Token, HashMap<Token, Integer>>, TokenizerMode> temp = readTable(path);
+        table = temp.first();
+        sumTable = countSumTable(table);
+        mode = temp.second();
         this.path = path;
+    }
+
+    public Table(String path, TokenizerMode mode) {
+        table = new HashMap<>();
+        sumTable = new HashMap<>();
+        this.mode = mode;
+        this.path = path;
+    }
+
+    public TokenizerMode getMode() {
+        return mode;
     }
 
     public Token getRandomFirstToken() {
@@ -86,20 +95,27 @@ public class Table {
         return sumTable;
     }
 
-    private static HashMap<Token, HashMap<Token, Integer>> readTable(String path) {
+    private static Pair<HashMap<Token, HashMap<Token, Integer>>, TokenizerMode> readTable(String path) {
         HashMap<Token, HashMap<Token, Integer>> table = new HashMap<>();
         ArrayList<String> strings = readFile(path);
-        for (int i = 0; i < strings.size(); i += 2) {
+        TokenizerMode mode = switch(strings.getFirst()) {
+            case "WORDS" -> TokenizerMode.WORDS;
+            case "LETTERS" -> TokenizerMode.LETTERS;
+            case "DOUBLE" -> TokenizerMode.DOUBLE;
+            case "TRIPLE" -> TokenizerMode.TRIPLE;
+            default -> throw new IllegalStateException("Unexpected value: " + strings.getFirst());
+        };
+        for (int i = 1; i < strings.size(); i += 2) {
             String s = strings.get(i);
             ArrayList<Integer> ints = readIntArray(strings.get(i+1));
-            ArrayList<Token> tokens = Tokenizer.tokenize(s);
+            ArrayList<Token> tokens = Tokenizer.tokenize(s, mode);
             Token firstToken = tokens.getFirst();
             table.put(firstToken, new HashMap<>());
             for (int j = 1; j < tokens.size(); j++) {
                 table.get(firstToken).put(tokens.get(j), ints.get(j-1));
             }
         }
-        return table;
+        return new Pair<>(table, mode);
     }
 
     private static String toIntString(ArrayList<Integer> ints) {

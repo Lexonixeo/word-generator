@@ -6,7 +6,7 @@ public class TableGenerator {
     public static void updateTable(Table table, String path) {
         ArrayList<String> strings = Table.readFile(path);
         String s = arrToString(strings);
-        ArrayList<Token> tokens = Tokenizer.tokenize(s);
+        ArrayList<Token> tokens = Tokenizer.tokenize(s, table.getMode());
         for (int i = 1; i < tokens.size(); i++) {
             table.addPair(tokens.get(i-1), tokens.get(i));
         }
