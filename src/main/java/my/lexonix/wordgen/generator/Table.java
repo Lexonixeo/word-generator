@@ -61,8 +61,7 @@ public class Table {
 
     public void updateTable(String textPath) {
         int k = switch(mode) {
-            case WORDS -> 1;
-            case LETTERS -> 1;
+            case WORDS, LETTERS -> 1;
             case DOUBLE -> 2;
             case TRIPLE -> 3;
             case QUADRUPLE -> 4;

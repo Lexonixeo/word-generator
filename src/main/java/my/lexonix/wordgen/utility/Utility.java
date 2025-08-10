@@ -53,7 +53,7 @@ public class Utility {
         StringBuilder sb = new StringBuilder();
         for (String str : s) {
             sb.append(str);
-            sb.append(" ");
+            sb.append("\n");
         }
         return sb.toString();
     }

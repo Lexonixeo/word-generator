@@ -4,7 +4,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 
 public class Tokenizer {
-    public static final String LETTERS_ALPHABET = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'!\"#$%&\\'()*+,-./:;<=>?@[\\\\]^_`{|}~' 0123456789";
+    // public static final String LETTERS_ALPHABET = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'!\"#$%&\\'()*+,-./:;<=>?@[\\\\]^_`{|}~' 0123456789";
     // public static final String WORDS_ALPHABET = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя";
 
     public static Token getLastToken(String s, TokenizerMode mode) {
@@ -22,7 +22,7 @@ public class Tokenizer {
             case DOUBLE -> getDoubleLetters(s);
             case TRIPLE -> getTripleLetters(s);
             case QUADRUPLE -> getQuadrupleLetters(s);
-            case RANDOM -> getRandomTokens(s, 60);
+            case RANDOM -> getRandomTokens(s, 50);
         };
     }
     
@@ -54,9 +54,9 @@ public class Tokenizer {
     private static ArrayList<Token> getLetters(String sentence) {
         ArrayList<Token> letters = new ArrayList<>();
         for (char c : sentence.toCharArray()) {
-            if (LETTERS_ALPHABET.contains(String.valueOf(c))) {
+            // if (LETTERS_ALPHABET.contains(String.valueOf(c))) {
                 letters.add(new Token(String.valueOf(c)));
-            }
+            // }
         }
         return letters;
     }
@@ -92,7 +92,8 @@ public class Tokenizer {
         ArrayList<Token> words = new ArrayList<>();
         StringBuilder newWord = new StringBuilder();
         for (int i = 0; i < sentence.length(); i++) {
-            if (!LETTERS_ALPHABET.contains(String.valueOf(sentence.charAt(i))) || sentence.charAt(i) == ' ') {
+            if (Character.isWhitespace(sentence.charAt(i))) {
+            // if (!LETTERS_ALPHABET.contains(String.valueOf(sentence.charAt(i))) || sentence.charAt(i) == ' ') {
                 if (!newWord.isEmpty()) {
                     words.add(new Token(newWord.toString()));
                     newWord.delete(0, newWord.length());
