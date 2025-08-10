@@ -17,11 +17,20 @@ public class WordGenerator {
 
     public static void main() {
         ArrayList<String> a = new ArrayList<>();
+        /*
+        a.add(WordGenerator.makeWord(TRIPLE));
+        a.add(WordGenerator.makeWord(TRIPLE));
+        a.add(WordGenerator.makeWord(TRIPLE));
+        a.add(WordGenerator.makeWord(TRIPLE));
+        a.add(WordGenerator.makeWord(TRIPLE));
+        */
+
         a.add(WordGenerator.makeWord(RANDOM));
         a.add(WordGenerator.makeWord(RANDOM));
         a.add(WordGenerator.makeWord(RANDOM));
         a.add(WordGenerator.makeWord(RANDOM));
         a.add(WordGenerator.makeWord(RANDOM));
+
         //a.add(Generator.makeWord("ЯЗЫНОГВА", TRIPLE));
         Utility.saveFile("data/word.txt", a);
     }
@@ -29,7 +38,7 @@ public class WordGenerator {
     private static Table getTable(TokenizerMode mode) {
         if (!tables.containsKey(mode.name())) {
             switch (mode) {
-                case WORDS -> throw new RuntimeException("Не поддерживается мод " + mode + " для создания новых слов.");
+                case WORDS -> throw new NoModeAvailableException("Не поддерживается мод " + mode + " для создания новых слов.");
                 case LETTERS -> tables.put(mode.name(), new Table("data/tables/dal1.json"));
                 case DOUBLE -> tables.put(mode.name(), new Table("data/tables/dal2.json"));
                 case TRIPLE -> tables.put(mode.name(), new Table("data/tables/dal3.json"));
@@ -69,7 +78,7 @@ public class WordGenerator {
             }
             attempt++;
         }
-        throw new RuntimeException("Не получилось создать слово :(");
+        throw new ManyAttemptsFailedException("Не получилось создать слово :(");
     }
 
     public static String makeWord(String startWord, TokenizerMode mode) {
@@ -102,7 +111,7 @@ public class WordGenerator {
             }
             attempt++;
         }
-        throw new RuntimeException("Не получилось создать слово :(");
+        throw new ManyAttemptsFailedException("Не получилось создать слово :(");
     }
 
     private static boolean isUpper(char c) {

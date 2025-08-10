@@ -1,5 +1,6 @@
 package my.lexonix.wordgen.utility;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -72,10 +73,37 @@ public class Utility {
         return ans;
     }
 
+    public static JSONArray getJSONArray(String path) {
+        JSONArray ans;
+        File file = new File(path);
+        try {
+            String content = new String(Files.readAllBytes(Paths.get(file.toURI())));
+            ans = new JSONArray(content);
+        } catch (NoSuchFileException e) {
+            throw new NoJSONFileException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return ans;
+    }
+
     public static void saveJSONObject(String path, JSONObject jo, int indent) {
         try (FileWriter file = new FileWriter(path)) {
             // Convert the JSONObject to a JSON string and write it
             file.write(jo.toString(indent));
+            // Alternatively, for pretty printing (if using org.json):
+            // file.write(jsonObject.toString(4)); // Indent with 4 spaces
+
+            file.flush(); // Ensure all data is written to the file
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void saveJSONArray(String path, JSONArray jo) {
+        try (FileWriter file = new FileWriter(path)) {
+            // Convert the JSONObject to a JSON string and write it
+            file.write(jo.toString(4));
             // Alternatively, for pretty printing (if using org.json):
             // file.write(jsonObject.toString(4)); // Indent with 4 spaces
 

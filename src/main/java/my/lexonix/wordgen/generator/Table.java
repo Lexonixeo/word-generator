@@ -155,6 +155,8 @@ public class Table {
     private static Pair<HashMap<Token, HashMap<Token, Integer>>, TokenizerMode> readTable(String path) {
         HashMap<Token, HashMap<Token, Integer>> table = new HashMap<>();
         ArrayList<String> strings = Utility.readFile(path);
+        TokenizerMode mode = TokenizerMode.valueOf(strings.getFirst());
+        /*
         TokenizerMode mode = switch(strings.getFirst()) {
             case "WORDS" -> TokenizerMode.WORDS;
             case "LETTERS" -> TokenizerMode.LETTERS;
@@ -164,6 +166,7 @@ public class Table {
             case "RANDOM" -> TokenizerMode.RANDOM;
             default -> throw new IllegalStateException("Unexpected value: " + strings.getFirst());
         };
+         */
         for (int i = 1; i < strings.size(); i += 2) {
             String s = strings.get(i);
             ArrayList<Integer> ints = Utility.readIntArray(strings.get(i+1));
@@ -180,6 +183,8 @@ public class Table {
     private static Pair<HashMap<Token, HashMap<Token, Integer>>, TokenizerMode> readTableJSON(String path) {
         HashMap<Token, HashMap<Token, Integer>> table = new HashMap<>();
         JSONObject js = Utility.getJSONObject(path);
+        TokenizerMode mode = TokenizerMode.valueOf(js.getString("m"));
+        /*
         TokenizerMode mode = switch(js.getString("m")) { // mode
             case "WORDS" -> TokenizerMode.WORDS;
             case "LETTERS" -> TokenizerMode.LETTERS;
@@ -189,6 +194,7 @@ public class Table {
             case "RANDOM" -> TokenizerMode.RANDOM;
             default -> throw new IllegalStateException("Unexpected value: " + js.getString("mode"));
         };
+        */
         JSONArray firstTokens = js.getJSONArray("f"); // firstTokens
         for (int i = 0; i < firstTokens.length(); i++) {
             JSONObject firstTokenJ = firstTokens.getJSONObject(i);
