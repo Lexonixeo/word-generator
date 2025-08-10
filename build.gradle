@@ -19,6 +19,48 @@ tasks.withType(JavaExec).configureEach {
     jvmArgs += '--enable-preview'
 }
 
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes "Main-Class": "my.lexonix.wordgen.generator.SentenceGenerator"
+    }
+    archiveFileName.set("sentence.jar")
+    destinationDirectory.set(file("/"))
+
+    from sourceSets.main.output
+
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+    }
+
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+}
+
+tasks.register('uberJar', Jar) {
+    manifest {
+        attributes "Main-Class": "funcmath.console.ConsoleLaunch"
+    }
+
+    archiveClassifier = 'uber'
+
+    archiveFileName.set("funcmath.jar")
+
+    destinationDirectory.set(file("/"))
+
+    from sourceSets.main.output
+
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+    }
+
+    doFirst {
+        from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+}
+
 
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')

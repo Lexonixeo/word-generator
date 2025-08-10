@@ -5,22 +5,22 @@ import java.util.Random;
 import java.util.TreeMap;
 
 public class RandomCollection<E> {
-    private final NavigableMap<Double, E> map = new TreeMap<>();
+    private final NavigableMap<Long, E> map = new TreeMap<>();
     private final Random random;
-    private double total = 0;
+    private long total = 0;
 
     public RandomCollection(Random random) {
         this.random = random;
     }
 
-    public void add(double weight, E result) {
+    public void add(int weight, E result) {
         if (weight <= 0) return;
         total += weight;
         map.put(total, result);
     }
 
     public E next() {
-        double value = random.nextDouble() * total;
+        long value = (long) (random.nextDouble() * total);
         return map.higherEntry(value).getValue();
     }
 }

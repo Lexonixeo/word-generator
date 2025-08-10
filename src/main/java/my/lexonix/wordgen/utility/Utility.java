@@ -8,7 +8,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
+// import java.util.Objects;
 
 public class Utility {
     public static String toIntString(ArrayList<Integer> ints) {
@@ -72,10 +72,10 @@ public class Utility {
         return ans;
     }
 
-    public static void saveJSONObject(String path, JSONObject jo) {
+    public static void saveJSONObject(String path, JSONObject jo, int indent) {
         try (FileWriter file = new FileWriter(path)) {
             // Convert the JSONObject to a JSON string and write it
-            file.write(jo.toString(1));
+            file.write(jo.toString(indent));
             // Alternatively, for pretty printing (if using org.json):
             // file.write(jsonObject.toString(4)); // Indent with 4 spaces
 
@@ -85,7 +85,9 @@ public class Utility {
         }
     }
 
+    /*
     public static int countFiles(String path) {
         return Objects.requireNonNull(new File(path).list()).length;
     }
+     */
 }

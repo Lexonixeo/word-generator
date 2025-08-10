@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import static my.lexonix.wordgen.tokens.TokenizerMode.*;
 
 public class SentenceGenerator {
-    public static void main(String[] args) {
-        Table table = new Table("data/tables/dal3.json", TRIPLE);
+    public static void main() {
+        Table table = new Table("data/tables/dalr.json", RANDOM);
         //table.updateTable("data/texts/geom.txt");
         //table.updateTable("data/texts/ogephys.txt");
         //table.updateTable("data/texts/physcollege.txt");
@@ -24,9 +24,9 @@ public class SentenceGenerator {
         //table.updateTable("data/texts/jokes.txt");
         //table.updateTable("data/texts/history.txt");
         //table.updateTable("data/texts/predvybor.txt");
-        table.saveTableJSON();
+        // table.saveTableJSON();
         SentenceGenerator.saveSentence(table, "data/sentence.txt", 500);
-        SentenceGenerator.saveSentence(table, "data/sentence.txt", 500, "ПРИКАЗНОВАТЬ");
+        //SentenceGenerator.saveSentence(table, "data/sentence.txt", 500, "ПРИКАЗНОВАТЬ");
     }
 
     public static String makeSentence(Table table, int tokensLength) {

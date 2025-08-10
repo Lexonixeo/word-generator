@@ -2,17 +2,7 @@ package my.lexonix.wordgen.tokens;
 
 import java.util.Objects;
 
-public class Token {
-    private final String token;
-
-    public Token(String token) {
-        this.token = token;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
+public record Token(String token) {
     @Override
     public String toString() {
         return this.token;
@@ -23,11 +13,11 @@ public class Token {
         if (this == o) return true;
         if (o == null || getClass().getSuperclass() != o.getClass().getSuperclass()) return false;
         Token token1 = (Token) o;
-        return Objects.equals(getToken(), token1.getToken());
+        return Objects.equals(token(), token1.token());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getToken());
+        return Objects.hashCode(token());
     }
 }

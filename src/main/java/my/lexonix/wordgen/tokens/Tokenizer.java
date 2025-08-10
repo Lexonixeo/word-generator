@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class Tokenizer {
     // public static final String LETTERS_ALPHABET = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'!\"#$%&\\'()*+,-./:;<=>?@[\\\\]^_`{|}~' 0123456789";
     // public static final String WORDS_ALPHABET = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя";
+    private static final int BOUND = 50;
 
     public static Token getLastToken(String s, TokenizerMode mode) {
         StringBuilder sr = new StringBuilder(s);
@@ -22,7 +23,7 @@ public class Tokenizer {
             case DOUBLE -> getDoubleLetters(s);
             case TRIPLE -> getTripleLetters(s);
             case QUADRUPLE -> getQuadrupleLetters(s);
-            case RANDOM -> getRandomTokens(s, 50);
+            case RANDOM -> getRandomTokens(s);
         };
     }
     
@@ -33,17 +34,16 @@ public class Tokenizer {
         };
     }
 
-    private static ArrayList<Token> getRandomTokens(String sentence, int bound) {
+    private static ArrayList<Token> getRandomTokens(String sentence) {
         ArrayList<Token> tokens = new ArrayList<>();
         SecureRandom r = new SecureRandom();
         StringBuilder lastToken = new StringBuilder();
         for (int i = 0; i < sentence.length(); i++) {
-            if ((lastToken.length() >= 2) && r.nextInt(100) >= bound) {
+            if ((lastToken.length() >= 2) && r.nextInt(100) >= BOUND) {
                 tokens.add(new Token(lastToken.toString()));
                 lastToken = new StringBuilder();
-            } else {
-                lastToken.append(sentence.charAt(i));
             }
+            lastToken.append(sentence.charAt(i));
         }
         if (!lastToken.isEmpty()) {
             tokens.add(new Token(lastToken.toString()));

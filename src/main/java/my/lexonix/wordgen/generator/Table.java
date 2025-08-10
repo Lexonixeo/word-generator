@@ -65,7 +65,7 @@ public class Table {
             case DOUBLE -> 2;
             case TRIPLE -> 3;
             case QUADRUPLE -> 4;
-            case RANDOM -> 10;
+            case RANDOM -> 3;
         };
         ArrayList<String> strings = Utility.readFile(textPath);
         String s = Utility.arrToString(strings);
@@ -95,7 +95,11 @@ public class Table {
             firstTokens.put(js);
         }
         j.put("f", firstTokens); // firstTokens
-        Utility.saveJSONObject(path, j);
+        int indent = switch (mode) {
+            case WORDS, LETTERS, DOUBLE, TRIPLE, QUADRUPLE -> 4;
+            case RANDOM -> 0;
+        };
+        Utility.saveJSONObject(path, j, indent);
     }
 
     @Deprecated
