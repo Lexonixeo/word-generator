@@ -5,5 +5,6 @@ public enum TokenizerMode {
     LETTERS,
     DOUBLE,
     TRIPLE,
-    QUADRUPLE
+    QUADRUPLE,
+    RANDOM
 }

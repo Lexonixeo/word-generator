@@ -2,10 +2,10 @@ package my.lexonix.wordgen.tokens;
 
 import java.util.Objects;
 
-public abstract class Token {
+public class Token {
     private final String token;
 
-    protected Token(String token) {
+    public Token(String token) {
         this.token = token;
     }
 

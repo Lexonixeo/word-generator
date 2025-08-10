@@ -7,7 +7,7 @@ import static my.lexonix.wordgen.tokens.TokenizerMode.*;
 
 public class Main {
     public static void main(String[] args) {
-        Table table = new Table("data/tables/dal4.txt", QUADRUPLE);
+        Table table = new Table("data/tables/wapr.json", RANDOM);
         //table.updateTable("data/texts/geom.txt");
         //table.updateTable("data/texts/ogephys.txt");
         //table.updateTable("data/texts/physcollege.txt");
@@ -16,12 +16,12 @@ public class Main {
         //table.updateTable("data/texts/gkrf.txt");
         //table.updateTable("data/texts/crf.txt");
         //table.updateTable("data/texts/dal.txt");
-        //table.updateTable("data/texts/wap.txt");
+        table.updateTable("data/texts/wap.txt");
         //table.updateTable("data/texts/pin.txt");
         //table.updateTable("data/texts/jokes.txt");
         //table.updateTable("data/texts/history.txt");
         //table.updateTable("data/texts/predvybor.txt");
-        table.saveTable();
+        table.saveTableJSON();
         SentenceGenerator.saveSentence(table, "data/sentence.txt", 500);
     }
 }

@@ -1,11 +1,14 @@
 package my.lexonix.wordgen.utility;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import org.json.JSONObject;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Utility {
     public static String toIntString(ArrayList<Integer> ints) {
@@ -53,5 +56,36 @@ public class Utility {
             sb.append(" ");
         }
         return sb.toString();
+    }
+
+    public static JSONObject getJSONObject(String path) {
+        JSONObject ans;
+        File file = new File(path);
+        try {
+            String content = new String(Files.readAllBytes(Paths.get(file.toURI())));
+            ans = new JSONObject(content);
+        } catch (NoSuchFileException e) {
+            throw new NoJSONFileException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return ans;
+    }
+
+    public static void saveJSONObject(String path, JSONObject jo) {
+        try (FileWriter file = new FileWriter(path)) {
+            // Convert the JSONObject to a JSON string and write it
+            file.write(jo.toString(1));
+            // Alternatively, for pretty printing (if using org.json):
+            // file.write(jsonObject.toString(4)); // Indent with 4 spaces
+
+            file.flush(); // Ensure all data is written to the file
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static int countFiles(String path) {
+        return Objects.requireNonNull(new File(path).list()).length;
     }
 }
