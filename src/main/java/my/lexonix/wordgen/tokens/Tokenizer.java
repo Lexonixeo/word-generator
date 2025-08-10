@@ -3,7 +3,7 @@ package my.lexonix.wordgen.tokens;
 import java.util.ArrayList;
 
 public class Tokenizer {
-    private static final String LETTERS_ALPHABET = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'!\"#$%&\\'()*+,-./:;<=>?@[\\\\]^_`{|}~' 0123456789";
+    public static final String LETTERS_ALPHABET = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'!\"#$%&\\'()*+,-./:;<=>?@[\\\\]^_`{|}~' 0123456789";
     public static final String WORDS_ALPHABET = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя";
 
     public static Token getLastToken(String s, TokenizerMode mode) {
@@ -72,7 +72,7 @@ public class Tokenizer {
         ArrayList<Token> words = new ArrayList<>();
         StringBuilder newWord = new StringBuilder();
         for (int i = 0; i < sentence.length(); i++) {
-            if (!WORDS_ALPHABET.contains(String.valueOf(sentence.charAt(i)))) {
+            if (!LETTERS_ALPHABET.contains(String.valueOf(sentence.charAt(i))) || sentence.charAt(i) == ' ') {
                 if (!newWord.isEmpty()) {
                     words.add(new Word(newWord.toString()));
                     newWord.delete(0, newWord.length());

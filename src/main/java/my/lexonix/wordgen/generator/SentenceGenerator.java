@@ -12,7 +12,7 @@ public class SentenceGenerator {
     }
 
     public static String makeSentence(Table table, int tokensLength, String begin) {
-        return begin + makeSentence(table, tokensLength, Tokenizer.getLastToken(begin, table.getMode()), false);
+        return begin + Tokenizer.getSeparator(table.getMode()) + makeSentence(table, tokensLength, Tokenizer.getLastToken(begin, table.getMode()), false);
     }
 
     public static String makeSentence(Table table, int tokensLength, Token firstToken, boolean showFirstToken) {

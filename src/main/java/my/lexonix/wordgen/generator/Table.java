@@ -58,11 +58,20 @@ public class Table {
     }
 
     public void updateTable(String textPath) {
-        ArrayList<String> strings = Utility.readFile(path);
+        int k = switch(mode) {
+            case WORDS -> 1;
+            case LETTERS -> 1;
+            case DOUBLE -> 2;
+            case TRIPLE -> 3;
+            case QUADRUPLE -> 4;
+        };
+        ArrayList<String> strings = Utility.readFile(textPath);
         String s = Utility.arrToString(strings);
-        ArrayList<Token> tokens = Tokenizer.tokenize(s, mode);
-        for (int i = 1; i < tokens.size(); i++) {
-            addPair(tokens.get(i-1), tokens.get(i));
+        for (int j = 0; j < k; j++) {
+            ArrayList<Token> tokens = Tokenizer.tokenize(s.substring(j), mode);
+            for (int i = 1; i < tokens.size(); i++) {
+                addPair(tokens.get(i-1), tokens.get(i));
+            }
         }
     }
 
