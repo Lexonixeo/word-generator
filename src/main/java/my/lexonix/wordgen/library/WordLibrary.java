@@ -15,7 +15,9 @@ public class WordLibrary {
     private static final HashMap<String, String> WHDG = new HashMap<>();
     private static final HashMap<String, String> WGDH = new HashMap<>();
     private static final HashMap<String, String> WHDH = new HashMap<>(); // Word-Humanitated Definition-Humanitated
-    private static final ArrayList<String> words = new ArrayList<>();
+    private static final HashMap<String, LibraryMode> WORD_MODES = new HashMap<>();
+    private static final HashMap<String, String> WORD_OWNERS = new HashMap<>(); // K: Word V: PlayerID
+    private static final ArrayList<String> BLOCKED_WORDS = new ArrayList<>();
 
     private static void save(String path, HashMap<String, String> map) {
         JSONArray ja = new JSONArray();
@@ -23,52 +25,77 @@ public class WordLibrary {
             JSONObject jo = new JSONObject();
             jo.put("w", word); // word
             jo.put("d", map.get(word)); // definition
+            jo.put("o", WORD_OWNERS.get(word)); // owner
             ja.put(jo);
         }
         Utility.saveJSONArray(path, ja);
     }
 
     public static void save() {
-        save("data/library/wgdg.json", WGDG);
-        save("data/library/whdg.json", WHDG);
-        save("data/library/wgdh.json", WGDH);
-        save("data/library/whdh.json", WHDH);
+        save("data/server/library/wgdg.json", WGDG);
+        save("data/server/library/whdg.json", WHDG);
+        save("data/server/library/wgdh.json", WGDH);
+        save("data/server/library/whdh.json", WHDH);
     }
 
-    private static void load(String path, HashMap<String, String> map) {
+    private static void load(String path, HashMap<String, String> map, LibraryMode mode) {
         JSONArray ja = Utility.getJSONArray(path);
         for (int i = 0; i < ja.length(); i++) {
             JSONObject jo = ja.getJSONObject(i);
-            map.put(jo.getString("w"), jo.getString("d")); // word + definition
-            assert !words.contains(jo.getString("w")) : 459327423;
-            words.add(jo.getString("w"));
+            String word = jo.getString("w"); // word
+            map.put(word, jo.getString("d")); // definition
+            assert !WORD_MODES.containsKey(word) : 459327423;
+            WORD_MODES.put(word, mode);
+            WORD_OWNERS.put(word, jo.getString("o")); // owner
         }
     }
 
     public static void load() {
-        load("data/library/wgdg.json", WGDG);
-        load("data/library/whdg.json", WHDG);
-        load("data/library/wgdh.json", WGDH);
-        load("data/library/whdh.json", WHDH);
+        load("data/server/library/wgdg.json", WGDG, LibraryMode.WordGen_DefGen);
+        load("data/server/library/whdg.json", WHDG, LibraryMode.WordHum_DefGen);
+        load("data/server/library/wgdh.json", WGDH, LibraryMode.WordGen_DefHum);
+        load("data/server/library/whdh.json", WHDH, LibraryMode.WordHum_DefHum);
     }
 
-    public static void addWord(String word, String def, LibraryMode mode) {
-        if (words.contains(word.toUpperCase())) {
+    public static void addWord(String word, String def, LibraryMode mode, String playerID) {
+        if (WORD_MODES.containsKey(word.toUpperCase())) {
             throw new WordExistsException("Слово уже существует!");
         }
-        switch (mode) {
-            case WordGen_DefGen -> WGDG.put(word.toUpperCase(), def);
-            case WordHum_DefHum -> WHDH.put(word.toUpperCase(), def);
-            case WordGen_DefHum -> WGDH.put(word.toUpperCase(), def);
-            case WordHum_DefGen -> WHDG.put(word.toUpperCase(), def);
-        }
-        words.add(word.toUpperCase());
+        (switch (mode) {
+            case WordGen_DefGen -> WGDG;
+            case WordHum_DefHum -> WHDH;
+            case WordGen_DefHum -> WGDH;
+            case WordHum_DefGen -> WHDG;
+        }).put(word.toUpperCase(), def);
+        WORD_MODES.put(word.toUpperCase(), mode);
+        WORD_OWNERS.put(word.toUpperCase(), playerID);
     }
 
-    public static void addWord(String sentence, LibraryMode mode) {
+    public static void addWord(String sentence, LibraryMode mode, String playerID) {
         Token firstToken = Tokenizer.tokenize(sentence, TokenizerMode.WORDS).getFirst();
         String word = firstToken.toString();
         String definition = sentence.substring(word.length());
-        addWord(word, definition, mode);
+        addWord(word, definition, mode, playerID);
+    }
+
+    public static String getDefinition(String word) {
+        if (!WORD_MODES.containsKey(word.toUpperCase())) {
+            throw new NoWordException("Не существует слова " + word);
+        }
+        LibraryMode mode = WORD_MODES.get(word.toUpperCase());
+        return (switch (mode) {
+            case WordGen_DefGen -> WGDG;
+            case WordHum_DefHum -> WHDH;
+            case WordGen_DefHum -> WGDH;
+            case WordHum_DefGen -> WHDG;
+        }).get(word);
+    }
+
+    public static String getPlayerID(String word) {
+        return WORD_OWNERS.get(word.toUpperCase());
+    }
+
+    public static void blockWord(String word) {
+
     }
 }

@@ -4,9 +4,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 // import java.util.Objects;
@@ -111,6 +114,30 @@ public class Utility {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String getSHA256(String secret) {
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        byte[] encodedhash = digest.digest(secret.getBytes(StandardCharsets.UTF_8));
+        return bytesToHex(encodedhash); // Получаем искомую шестнадцатеричную строку!
+    }
+
+    // Пошаговое преобразование байтов в шестнадцатеричную строку
+    private static String bytesToHex(byte[] hash) {
+        StringBuilder hexString = new StringBuilder(2 * hash.length);
+        for (byte b : hash) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 
     /*
