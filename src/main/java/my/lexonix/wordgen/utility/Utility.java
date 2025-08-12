@@ -12,7 +12,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
-// import java.util.Objects;
 
 public class Utility {
     public static String toIntString(ArrayList<Integer> ints) {
@@ -96,12 +95,8 @@ public class Utility {
     public static void saveJSONObject(String path, JSONObject jo, int indent) {
         Logger.write("Сохранение JSONObject " + path);
         try (FileWriter file = new FileWriter(path)) {
-            // Convert the JSONObject to a JSON string and write it
             file.write(jo.toString(indent));
-            // Alternatively, for pretty printing (if using org.json):
-            // file.write(jsonObject.toString(4)); // Indent with 4 spaces
-
-            file.flush(); // Ensure all data is written to the file
+            file.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -110,29 +105,24 @@ public class Utility {
     public static void saveJSONArray(String path, JSONArray jo) {
         Logger.write("Сохранение JSONArray " + path);
         try (FileWriter file = new FileWriter(path)) {
-            // Convert the JSONObject to a JSON string and write it
             file.write(jo.toString(4));
-            // Alternatively, for pretty printing (if using org.json):
-            // file.write(jsonObject.toString(4)); // Indent with 4 spaces
-
-            file.flush(); // Ensure all data is written to the file
+            file.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static String getSHA256(String secret) {
-        MessageDigest digest = null;
+        MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
         byte[] encodedhash = digest.digest(secret.getBytes(StandardCharsets.UTF_8));
-        return bytesToHex(encodedhash); // Получаем искомую шестнадцатеричную строку!
+        return bytesToHex(encodedhash);
     }
 
-    // Пошаговое преобразование байтов в шестнадцатеричную строку
     private static String bytesToHex(byte[] hash) {
         StringBuilder hexString = new StringBuilder(2 * hash.length);
         for (byte b : hash) {

@@ -16,16 +16,19 @@ import java.util.HashMap;
 
 public class Table {
     private final HashMap<Token, HashMap<Token, Integer>> table;
-    private final HashMap<Token, Integer> sumTable;
     private final String path;
     private final SecureRandom random = new SecureRandom();
     private final TokenizerMode mode;
+    private final RandomCollection<Token> randomCollection;
 
     public Table(String path) {
         Logger.write("Получение таблички " + path);
         Pair<HashMap<Token, HashMap<Token, Integer>>, TokenizerMode> temp = readTableJSON(path);
         table = temp.first();
-        sumTable = countSumTable(table);
+
+        randomCollection = new RandomCollection<>(random);
+        countRandomCollection();
+
         mode = temp.second();
         this.path = path;
     }
@@ -33,7 +36,7 @@ public class Table {
     public Table(String path, TokenizerMode mode) {
         Logger.write("Новая табличка! " + path + " : " + mode);
         table = new HashMap<>();
-        sumTable = new HashMap<>();
+        randomCollection = new RandomCollection<>(random);
         this.mode = mode;
         this.path = path;
     }
@@ -43,11 +46,7 @@ public class Table {
     }
 
     public Token getRandomFirstToken() {
-        RandomCollection<Token> rc = new RandomCollection<>(random);
-        for (Token t : table.keySet()) {
-            rc.add(sumTable.get(t), t);
-        }
-        return rc.next();
+        return randomCollection.next();
     }
 
     public Token getRandomToken(Token before) {
@@ -135,17 +134,15 @@ public class Table {
     private void addPair(Token before, Token token) {
         if (!table.containsKey(before)) {
             table.put(before, new HashMap<>());
-            sumTable.put(before, 0);
         }
         if (!table.get(before).containsKey(token)) {
             table.get(before).put(token, 0);
         }
         table.get(before).put(token, table.get(before).get(token) + 1);
-        sumTable.put(before, sumTable.get(before) + 1);
+        randomCollection.add(1, token);
     }
 
-    private static HashMap<Token, Integer> countSumTable(HashMap<Token, HashMap<Token, Integer>> table) {
-        HashMap<Token, Integer> sumTable = new HashMap<>();
+    private void countRandomCollection() {
         for (Token firstToken : table.keySet()) {
             int sum = 0;
 
@@ -153,9 +150,8 @@ public class Table {
                 sum += table.get(firstToken).get(t);
             }
 
-            sumTable.put(firstToken, sum);
+            randomCollection.add(sum, firstToken);
         }
-        return sumTable;
     }
 
     @Deprecated

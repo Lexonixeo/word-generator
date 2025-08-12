@@ -16,7 +16,7 @@ public class WordGenerator {
     private final static String UPPER_LETTERS = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private final static HashMap<String, Table> tables = new HashMap<>();
     private final static HashMap<TokenizerMode, LinkedList<String>> wordsQueueMap = new HashMap<>();
-    private final static int TOKEN_LENGTH = 500;
+    private final static int TOKEN_LENGTH = 1000;
 
     public static void main() {
         ArrayList<String> a = new ArrayList<>();
@@ -28,13 +28,6 @@ public class WordGenerator {
         a.add(WordGenerator.makeWord(TRIPLE));
         */
 
-        a.add(WordGenerator.makeWord("ЯЗЫНОГВА", TRIPLE));
-        for (int i = 0; i < 100; i++) {
-            a.add(WordGenerator.makeWord(RANDOM));
-        }
-        for (int i = 0; i < 100; i++) {
-            a.add(WordGenerator.makeWord(QUADRUPLE));
-        }
         for (int i = 0; i < 100; i++) {
             a.add(WordGenerator.makeWord(DOUBLE));
         }
