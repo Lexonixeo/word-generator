@@ -13,7 +13,7 @@ public class RandomCollection<E> {
         this.random = random;
     }
 
-    public void add(int weight, E result) {
+    public void add(long weight, E result) {
         if (weight <= 0) return;
         total += weight;
         map.put(total, result);

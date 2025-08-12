@@ -20,30 +20,26 @@ public class WordGenerator {
 
     public static void main() {
         ArrayList<String> a = new ArrayList<>();
-        /*
-        a.add(WordGenerator.makeWord(TRIPLE));
-        a.add(WordGenerator.makeWord(TRIPLE));
-        a.add(WordGenerator.makeWord(TRIPLE));
-        a.add(WordGenerator.makeWord(TRIPLE));
-        a.add(WordGenerator.makeWord(TRIPLE));
-        */
 
+        a.add(WordGenerator.makeWord("ЯЗЫНОГВА", TRIPLE));
         for (int i = 0; i < 100; i++) {
-            a.add(WordGenerator.makeWord(DOUBLE));
+            a.add(WordGenerator.makeWord(RANDOM));
+        }
+        for (int i = 0; i < 100; i++) {
+            a.add(WordGenerator.makeWord(QUADRUPLE));
         }
 
-        //a.add(Generator.makeWord("ЯЗЫНОГВА", TRIPLE));
         Utility.saveFile("data/word.txt", a);
     }
 
     private static void addTable(TokenizerMode mode) {
         switch (mode) {
             case WORDS -> throw new NoModeAvailableException("Не поддерживается мод " + mode + " для создания новых слов.");
-            case LETTERS -> tables.put(mode.name(), new Table("data/tables/dal1.json"));
-            case DOUBLE -> tables.put(mode.name(), new Table("data/tables/dal2.json"));
-            case TRIPLE -> tables.put(mode.name(), new Table("data/tables/dal3.json"));
-            case QUADRUPLE -> tables.put(mode.name(), new Table("data/tables/dal4.json"));
-            case RANDOM -> tables.put(mode.name(), new Table("data/tables/dalr.json"));
+            case LETTERS -> tables.put(mode.name(), new Table("data/tables/dal1.json", true));
+            case DOUBLE -> tables.put(mode.name(), new Table("data/tables/dal2.json", true));
+            case TRIPLE -> tables.put(mode.name(), new Table("data/tables/dal3.json", true));
+            case QUADRUPLE -> tables.put(mode.name(), new Table("data/tables/dal4.json", true));
+            case RANDOM -> tables.put(mode.name(), new Table("data/tables/dalr.json", true));
         }
     }
 

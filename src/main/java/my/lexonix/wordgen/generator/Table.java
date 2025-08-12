@@ -16,29 +16,35 @@ import java.util.HashMap;
 
 public class Table {
     private final HashMap<Token, HashMap<Token, Integer>> table;
+    private final HashMap<Token, RandomCollection<Token>> tableRC;
     private final String path;
     private final SecureRandom random = new SecureRandom();
     private final TokenizerMode mode;
     private final RandomCollection<Token> randomCollection;
+    private final boolean isReadOnly;
 
-    public Table(String path) {
+    public Table(String path, boolean isReadOnly) {
         Logger.write("Получение таблички " + path);
-        Pair<HashMap<Token, HashMap<Token, Integer>>, TokenizerMode> temp = readTableJSON(path);
-        table = temp.first();
-
+        this.isReadOnly = isReadOnly;
+        table = new HashMap<>();
+        tableRC = new HashMap<>();
         randomCollection = new RandomCollection<>(random);
-        countRandomCollection();
-
-        mode = temp.second();
+        if (!isReadOnly) {
+            mode = readTableJSON(path);
+        } else {
+            mode = readRCTableJSON(path);
+        }
         this.path = path;
     }
 
     public Table(String path, TokenizerMode mode) {
         Logger.write("Новая табличка! " + path + " : " + mode);
         table = new HashMap<>();
+        tableRC = new HashMap<>();
         randomCollection = new RandomCollection<>(random);
         this.mode = mode;
         this.path = path;
+        this.isReadOnly = false;
     }
 
     public TokenizerMode getMode() {
@@ -50,15 +56,19 @@ public class Table {
     }
 
     public Token getRandomToken(Token before) {
-        if (!table.containsKey(before)) {
+        if (!table.containsKey(before) && !tableRC.containsKey(before)) {
             throw new NoTokenException("В текущей модели отсутствует продолжение для токена " + before);
         }
 
-        RandomCollection<Token> rc = new RandomCollection<>(random);
-        for (Token t : table.get(before).keySet()) {
-            rc.add(table.get(before).get(t), t);
+        if (!isReadOnly) {
+            RandomCollection<Token> rc = new RandomCollection<>(random);
+            for (Token t : table.get(before).keySet()) {
+                rc.add(table.get(before).get(t), t);
+            }
+            return rc.next();
+        } else {
+            return tableRC.get(before).next();
         }
-        return rc.next();
     }
 
     public void updateTable(String textPath) {
@@ -81,6 +91,7 @@ public class Table {
     }
 
     public void saveTableJSON() {
+        assert !isReadOnly : 527014032;
         Logger.write("Сохранение в JSON таблицы " + path);
         JSONObject j = new JSONObject();
         j.put("m", mode.name()); // mode
@@ -108,6 +119,7 @@ public class Table {
 
     @Deprecated
     public void saveTable() {
+        assert !isReadOnly : 495324325;
         Logger.write("Сохранение в TXT таблицы " + path);
 
         ArrayList<String> strings = new ArrayList<>();
@@ -132,6 +144,7 @@ public class Table {
     }
 
     private void addPair(Token before, Token token) {
+        assert !isReadOnly : 486549203;
         if (!table.containsKey(before)) {
             table.put(before, new HashMap<>());
         }
@@ -142,35 +155,12 @@ public class Table {
         randomCollection.add(1, token);
     }
 
-    private void countRandomCollection() {
-        for (Token firstToken : table.keySet()) {
-            int sum = 0;
-
-            for (Token t : table.get(firstToken).keySet()) {
-                sum += table.get(firstToken).get(t);
-            }
-
-            randomCollection.add(sum, firstToken);
-        }
-    }
-
     @Deprecated
     private static Pair<HashMap<Token, HashMap<Token, Integer>>, TokenizerMode> readTable(String path) {
         Logger.write("Чтение TXT таблицы " + path);
         HashMap<Token, HashMap<Token, Integer>> table = new HashMap<>();
         ArrayList<String> strings = Utility.readFile(path);
         TokenizerMode mode = TokenizerMode.valueOf(strings.getFirst());
-        /*
-        TokenizerMode mode = switch(strings.getFirst()) {
-            case "WORDS" -> TokenizerMode.WORDS;
-            case "LETTERS" -> TokenizerMode.LETTERS;
-            case "DOUBLE" -> TokenizerMode.DOUBLE;
-            case "TRIPLE" -> TokenizerMode.TRIPLE;
-            case "QUADRUPLE" -> TokenizerMode.QUADRUPLE; // oops, i forgot it :)
-            case "RANDOM" -> TokenizerMode.RANDOM;
-            default -> throw new IllegalStateException("Unexpected value: " + strings.getFirst());
-        };
-         */
         for (int i = 1; i < strings.size(); i += 2) {
             String s = strings.get(i);
             ArrayList<Integer> ints = Utility.readIntArray(strings.get(i+1));
@@ -184,37 +174,52 @@ public class Table {
         return new Pair<>(table, mode);
     }
 
-    private static Pair<HashMap<Token, HashMap<Token, Integer>>, TokenizerMode> readTableJSON(String path) {
+    private TokenizerMode readTableJSON(String path) {
         Logger.write("Чтение JSON таблицы " + path);
 
-        HashMap<Token, HashMap<Token, Integer>> table = new HashMap<>();
         JSONObject js = Utility.getJSONObject(path);
         TokenizerMode mode = TokenizerMode.valueOf(js.getString("m"));
-        /*
-        TokenizerMode mode = switch(js.getString("m")) { // mode
-            case "WORDS" -> TokenizerMode.WORDS;
-            case "LETTERS" -> TokenizerMode.LETTERS;
-            case "DOUBLE" -> TokenizerMode.DOUBLE;
-            case "TRIPLE" -> TokenizerMode.TRIPLE;
-            case "QUADRUPLE" -> TokenizerMode.QUADRUPLE; // oops, i forgot it :)
-            case "RANDOM" -> TokenizerMode.RANDOM;
-            default -> throw new IllegalStateException("Unexpected value: " + js.getString("mode"));
-        };
-        */
         JSONArray firstTokens = js.getJSONArray("f"); // firstTokens
         for (int i = 0; i < firstTokens.length(); i++) {
             JSONObject firstTokenJ = firstTokens.getJSONObject(i);
             Token firstToken = new Token(firstTokenJ.getString("f")); // firstToken
             table.put(firstToken, new HashMap<>());
             JSONArray tokensJ = firstTokenJ.getJSONArray("t"); // tokens
+            long sum = 0;
             for (int j = 0; j < tokensJ.length(); j++) {
                 JSONObject jso = tokensJ.getJSONObject(j);
                 Token t = new Token(jso.getString("t")); // token
                 int freq = jso.getInt("f"); // frequency
                 table.get(firstToken).put(t, freq);
+                sum += freq;
             }
+            randomCollection.add(sum, firstToken);
         }
-        return new Pair<>(table, mode);
+        return mode;
+    }
+
+    private TokenizerMode readRCTableJSON(String path) {
+        Logger.write("Чтение JSON таблицы (RC) " + path);
+
+        JSONObject js = Utility.getJSONObject(path);
+        TokenizerMode mode = TokenizerMode.valueOf(js.getString("m"));
+        JSONArray firstTokens = js.getJSONArray("f"); // firstTokens
+        for (int i = 0; i < firstTokens.length(); i++) {
+            JSONObject firstTokenJ = firstTokens.getJSONObject(i);
+            Token firstToken = new Token(firstTokenJ.getString("f")); // firstToken
+            tableRC.put(firstToken, new RandomCollection<>(random));
+            JSONArray tokensJ = firstTokenJ.getJSONArray("t"); // tokens
+            long sum = 0;
+            for (int j = 0; j < tokensJ.length(); j++) {
+                JSONObject jso = tokensJ.getJSONObject(j);
+                Token t = new Token(jso.getString("t")); // token
+                int freq = jso.getInt("f"); // frequency
+                tableRC.get(firstToken).add(freq, t);
+                sum += freq;
+            }
+            randomCollection.add(sum, firstToken);
+        }
+        return mode;
     }
 }
 
