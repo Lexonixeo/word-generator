@@ -1,5 +1,6 @@
 package my.lexonix.wordgen.library;
 
+import my.lexonix.wordgen.utility.Logger;
 import my.lexonix.wordgen.tokens.Token;
 import my.lexonix.wordgen.tokens.Tokenizer;
 import my.lexonix.wordgen.tokens.TokenizerMode;
@@ -32,6 +33,7 @@ public class WordLibrary {
     }
 
     public static void save() {
+        Logger.write("Сохранение библиотеки слов");
         save("data/server/library/wgdg.json", WGDG);
         save("data/server/library/whdg.json", WHDG);
         save("data/server/library/wgdh.json", WGDH);
@@ -51,6 +53,7 @@ public class WordLibrary {
     }
 
     public static void load() {
+        Logger.write("Загрузка библиотеки слов");
         load("data/server/library/wgdg.json", WGDG, LibraryMode.WordGen_DefGen);
         load("data/server/library/whdg.json", WHDG, LibraryMode.WordHum_DefGen);
         load("data/server/library/wgdh.json", WGDH, LibraryMode.WordGen_DefHum);
@@ -58,6 +61,7 @@ public class WordLibrary {
     }
 
     public static void addWord(String word, String def, LibraryMode mode, String playerID) {
+        Logger.write("Добавление в библиотеку слова " + word);
         if (WORD_MODES.containsKey(word.toUpperCase())) {
             throw new WordExistsException("Слово уже существует!");
         }
@@ -96,6 +100,6 @@ public class WordLibrary {
     }
 
     public static void blockWord(String word) {
-
+        // TODO
     }
 }

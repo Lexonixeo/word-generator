@@ -2,6 +2,7 @@ package my.lexonix.wordgen.generator;
 
 import my.lexonix.wordgen.tokens.Token;
 import my.lexonix.wordgen.tokens.Tokenizer;
+import my.lexonix.wordgen.utility.Logger;
 import my.lexonix.wordgen.utility.Utility;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class SentenceGenerator {
     }
 
     public static String makeSentence(Table table, int tokensLength, Token firstToken, boolean showFirstToken) {
+        Logger.write("Создание предложения в " + tokensLength + " токенов и мода " + table.getMode());
         StringBuilder sb = new StringBuilder();
 
         Token nextToken = firstToken;

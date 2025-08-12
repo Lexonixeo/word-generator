@@ -3,6 +3,7 @@ package my.lexonix.wordgen.generator;
 import my.lexonix.wordgen.tokens.Token;
 import my.lexonix.wordgen.tokens.Tokenizer;
 import my.lexonix.wordgen.tokens.TokenizerMode;
+import my.lexonix.wordgen.utility.Logger;
 import my.lexonix.wordgen.utility.Pair;
 import my.lexonix.wordgen.utility.RandomCollection;
 import my.lexonix.wordgen.utility.Utility;
@@ -21,6 +22,7 @@ public class Table {
     private final TokenizerMode mode;
 
     public Table(String path) {
+        Logger.write("Получение таблички " + path);
         Pair<HashMap<Token, HashMap<Token, Integer>>, TokenizerMode> temp = readTableJSON(path);
         table = temp.first();
         sumTable = countSumTable(table);
@@ -29,6 +31,7 @@ public class Table {
     }
 
     public Table(String path, TokenizerMode mode) {
+        Logger.write("Новая табличка! " + path + " : " + mode);
         table = new HashMap<>();
         sumTable = new HashMap<>();
         this.mode = mode;
@@ -60,6 +63,7 @@ public class Table {
     }
 
     public void updateTable(String textPath) {
+        Logger.write("Обновление таблички текстом " + textPath);
         int k = switch(mode) {
             case WORDS, LETTERS -> 1;
             case DOUBLE -> 2;
@@ -78,6 +82,7 @@ public class Table {
     }
 
     public void saveTableJSON() {
+        Logger.write("Сохранение в JSON таблицы " + path);
         JSONObject j = new JSONObject();
         j.put("m", mode.name()); // mode
         JSONArray firstTokens = new JSONArray();
@@ -104,6 +109,8 @@ public class Table {
 
     @Deprecated
     public void saveTable() {
+        Logger.write("Сохранение в TXT таблицы " + path);
+
         ArrayList<String> strings = new ArrayList<>();
         strings.add(mode.name());
         for (Token firstToken : table.keySet()) {
@@ -153,6 +160,7 @@ public class Table {
 
     @Deprecated
     private static Pair<HashMap<Token, HashMap<Token, Integer>>, TokenizerMode> readTable(String path) {
+        Logger.write("Чтение TXT таблицы " + path);
         HashMap<Token, HashMap<Token, Integer>> table = new HashMap<>();
         ArrayList<String> strings = Utility.readFile(path);
         TokenizerMode mode = TokenizerMode.valueOf(strings.getFirst());
@@ -181,6 +189,8 @@ public class Table {
     }
 
     private static Pair<HashMap<Token, HashMap<Token, Integer>>, TokenizerMode> readTableJSON(String path) {
+        Logger.write("Чтение JSON таблицы " + path);
+
         HashMap<Token, HashMap<Token, Integer>> table = new HashMap<>();
         JSONObject js = Utility.getJSONObject(path);
         TokenizerMode mode = TokenizerMode.valueOf(js.getString("m"));

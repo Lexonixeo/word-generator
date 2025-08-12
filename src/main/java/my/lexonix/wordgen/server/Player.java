@@ -1,6 +1,7 @@
 package my.lexonix.wordgen.server;
 
 import my.lexonix.wordgen.library.WordLibrary;
+import my.lexonix.wordgen.utility.Logger;
 import my.lexonix.wordgen.utility.Utility;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -52,6 +53,7 @@ public class Player {
     }
 
     public void save() {
+        Logger.write("Сохранение игрока " + playerID);
         JSONObject json = new JSONObject();
         json.put("p", playerID); // playerID
         json.put("h", passHash); // passHash
@@ -69,6 +71,7 @@ public class Player {
     }
 
     public void addBalance(long delta) {
+        Logger.write("Обновление баланса игрока " + playerID + " на " + delta);
         this.balance += delta;
     }
 

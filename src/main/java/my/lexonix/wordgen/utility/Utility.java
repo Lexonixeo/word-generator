@@ -20,6 +20,7 @@ public class Utility {
     }
 
     public static void saveFile(String path, ArrayList<String> arr) {
+        Logger.write("Сохранение ArrayList<String> " + path);
         try {
             FileWriter writer = new FileWriter(path);
             for(String str: arr) {
@@ -63,6 +64,7 @@ public class Utility {
     }
 
     public static JSONObject getJSONObject(String path) {
+        Logger.write("Взятие JSONObject " + path);
         JSONObject ans;
         File file = new File(path);
         try {
@@ -77,6 +79,7 @@ public class Utility {
     }
 
     public static JSONArray getJSONArray(String path) {
+        Logger.write("Взятие JSONArray " + path);
         JSONArray ans;
         File file = new File(path);
         try {
@@ -91,6 +94,7 @@ public class Utility {
     }
 
     public static void saveJSONObject(String path, JSONObject jo, int indent) {
+        Logger.write("Сохранение JSONObject " + path);
         try (FileWriter file = new FileWriter(path)) {
             // Convert the JSONObject to a JSON string and write it
             file.write(jo.toString(indent));
@@ -104,6 +108,7 @@ public class Utility {
     }
 
     public static void saveJSONArray(String path, JSONArray jo) {
+        Logger.write("Сохранение JSONArray " + path);
         try (FileWriter file = new FileWriter(path)) {
             // Convert the JSONObject to a JSON string and write it
             file.write(jo.toString(4));
