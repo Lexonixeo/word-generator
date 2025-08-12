@@ -1,4 +1,4 @@
-package my.lexonix.wordgen.multiplayer;
+package my.lexonix.wordgen.server;
 
 public enum PlatformMode {
     CONSOLE,

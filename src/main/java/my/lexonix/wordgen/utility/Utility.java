@@ -140,6 +140,10 @@ public class Utility {
         return hexString.toString();
     }
 
+    public static boolean isFileExists(String pathname) {
+        return new File(pathname.replace('\\', '/')).exists();
+    }
+
     /*
     public static int countFiles(String path) {
         return Objects.requireNonNull(new File(path).list()).length;

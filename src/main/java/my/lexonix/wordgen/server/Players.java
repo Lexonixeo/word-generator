@@ -1,4 +1,4 @@
-package my.lexonix.wordgen.multiplayer;
+package my.lexonix.wordgen.server;
 
 import my.lexonix.wordgen.utility.Utility;
 import org.json.JSONArray;
@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Server {
+public class Players {
     // игроки, которые были активны с последней чистки
     private static final ArrayList<Player> activePlayers = new ArrayList<>();
     private static final HashMap<String, Long> playerDebts = new HashMap<>(); // долги для выдачи игрокам
@@ -51,13 +51,22 @@ public class Server {
         playerDebts.remove(playerID);
     }
 
+    public static Player makeNewPlayer(PlatformMode mode, String accountID, String password) {
+        Player p = new Player(mode, accountID, Utility.getSHA256(password));
+        if (Utility.isFileExists("data/server/players/" + p.getPlayerID() + ".json")) {
+            throw new AuthorizationException("Пользователь уже существует!");
+        }
+        activePlayers.add(p);
+        return p;
+    }
+
     public static Player getPlayer(String playerID, String passHash) {
         for (Player p : activePlayers) {
             if (p.getPlayerID().equals(playerID)) {
                 if (p.checkPassHash(passHash)) {
                     return p;
                 } else {
-                    throw new AuthorizationException("Ошибка авторизации");
+                    throw new AuthorizationException("Ошибка авторизации 5380532");
                 }
             }
         }

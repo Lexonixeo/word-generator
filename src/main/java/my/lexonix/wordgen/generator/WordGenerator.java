@@ -25,11 +25,9 @@ public class WordGenerator {
         a.add(WordGenerator.makeWord(TRIPLE));
         */
 
-        a.add(WordGenerator.makeWord(RANDOM));
-        a.add(WordGenerator.makeWord(RANDOM));
-        a.add(WordGenerator.makeWord(RANDOM));
-        a.add(WordGenerator.makeWord(RANDOM));
-        a.add(WordGenerator.makeWord(RANDOM));
+        for (int i = 0; i < 100; i++) {
+            a.add(WordGenerator.makeWord(RANDOM));
+        }
 
         //a.add(Generator.makeWord("ЯЗЫНОГВА", TRIPLE));
         Utility.saveFile("data/word.txt", a);

@@ -1,4 +1,4 @@
-package my.lexonix.wordgen.clients.console;
+package my.lexonix.wordgen.gateway.console;
 
 import java.io.IOException;
 import java.util.Scanner;

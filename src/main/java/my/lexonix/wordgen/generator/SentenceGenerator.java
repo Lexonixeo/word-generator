@@ -10,7 +10,7 @@ import static my.lexonix.wordgen.tokens.TokenizerMode.*;
 
 public class SentenceGenerator {
     public static void main() {
-        Table table = new Table("data/tables/dalr2.json");
+        Table table = new Table("data/tables/orfoep4.json", QUADRUPLE);
         //table.updateTable("data/texts/geom.txt");
         //table.updateTable("data/texts/ogephys.txt");
         //table.updateTable("data/texts/physcollege.txt");
@@ -19,12 +19,13 @@ public class SentenceGenerator {
         //table.updateTable("data/texts/gkrf.txt");
         //table.updateTable("data/texts/crf.txt");
         //table.updateTable("data/texts/dal.txt");
+        table.updateTable("data/texts/orfoep.txt");
         //table.updateTable("data/texts/wap.txt");
         //table.updateTable("data/texts/pin.txt");
         //table.updateTable("data/texts/jokes.txt");
         //table.updateTable("data/texts/history.txt");
         //table.updateTable("data/texts/predvybor.txt");
-        //table.saveTableJSON();
+        table.saveTableJSON();
         SentenceGenerator.saveSentence(table, "data/sentence.txt", 500);
         //SentenceGenerator.saveSentence(table, "data/sentence.txt", 500, "ПРИКАЗНОВАТЬ");
     }

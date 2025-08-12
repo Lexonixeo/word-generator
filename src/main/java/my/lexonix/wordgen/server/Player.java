@@ -1,4 +1,4 @@
-package my.lexonix.wordgen.multiplayer;
+package my.lexonix.wordgen.server;
 
 import my.lexonix.wordgen.library.WordLibrary;
 import my.lexonix.wordgen.utility.Utility;
@@ -8,13 +8,19 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class Player {
-    private String playerID;
-    private String passHash;
+    private final String playerID;
+    private final String passHash;
     private long balance;
     private final ArrayList<String> words;
 
-    public Player(PlatformMode mode, String playerID, String password) {
-        this.playerID = playerID;
+    public Player(PlatformMode mode, String accountID, String password) {
+        String playerID = switch(mode) {
+            case CONSOLE -> "c";
+            case TELEGRAM -> "t";
+            case DISCORD -> "d";
+        };
+        this.playerID = playerID + accountID;
+
         this.passHash = Utility.getSHA256(password);
         this.balance = 20;
         this.words = new ArrayList<>();
@@ -41,8 +47,8 @@ public class Player {
     }
 
     public void checkDebt() {
-        this.balance += Server.getDebt(playerID);
-        Server.removeDebt(playerID);
+        this.balance += Players.getDebt(playerID);
+        Players.removeDebt(playerID);
     }
 
     public void save() {
