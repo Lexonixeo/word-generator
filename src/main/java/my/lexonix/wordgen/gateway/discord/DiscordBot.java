@@ -18,7 +18,8 @@ import org.json.JSONObject;
 
 public class DiscordBot extends JDABuilder {
     private JDA jda;
-    private final MainAndWordsListener cl = new MainAndWordsListener();
+    private final MainListener ml = new MainListener();
+    private final WordsListener wl = new WordsListener();
 
     public static void main() {
         DiscordBot bot = new DiscordBot();
@@ -38,13 +39,19 @@ public class DiscordBot extends JDABuilder {
                 GatewayIntent.DIRECT_MESSAGES, // для личных сообщений
                 GatewayIntent.MESSAGE_CONTENT // если бот читает содержимое сообщений
         );
-        addEventListeners(cl);
+        addEventListeners(ml);
+        addEventListeners(wl);
         setActivity(Activity.playing("Type /profile"));
     }
 
     public void launch() {
         Logger.write("[DiscordBot] Запуск бота");
         jda = build();
+        try {
+            jda.awaitReady(); // Важно!
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         jda.updateCommands().addCommands(
                 Commands.slash("profile", "Открыть свой профиль"),
                 Commands.slash("read", "Узнать информацию о слове")
@@ -62,7 +69,7 @@ public class DiscordBot extends JDABuilder {
         Thread stopper = new DoingThreadie("Stopper", true) {
             @Override
             public void run() {
-                cl.getUpdater().interrupt();
+                wl.getUpdater().interrupt();
                 jda.shutdown();
                 try {
                     jda.awaitShutdown(); // Ожидаем завершения
@@ -89,7 +96,7 @@ public class DiscordBot extends JDABuilder {
                     PlatformMode.DISCORD,
                     accountID,
                     Utility.getSHA256(password),
-                    user.getGlobalName());
+                    user.getName());
         }
         return p;
     }

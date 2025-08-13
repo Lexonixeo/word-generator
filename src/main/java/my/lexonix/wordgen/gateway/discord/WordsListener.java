@@ -9,24 +9,20 @@ import my.lexonix.wordgen.server.*;
 import my.lexonix.wordgen.tokens.TokenizerMode;
 import my.lexonix.wordgen.utility.Logger;
 import my.lexonix.wordgen.utility.UpdateThreadie;
-import my.lexonix.wordgen.utility.Utility;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static my.lexonix.wordgen.tokens.TokenizerMode.*;
 
-public class MainAndWordsListener extends ListenerAdapter {
+public class WordsListener extends ListenerAdapter {
     private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(4);
     private final HashMap<Long, TempWord> tempWordHashMap = new HashMap<>();
     private final HashMap<Long, TempWordSentences> tempWordSentencesMap = new HashMap<>();
@@ -35,7 +31,7 @@ public class MainAndWordsListener extends ListenerAdapter {
 
     private final Thread updater;
 
-    public MainAndWordsListener() {
+    public WordsListener() {
         updater = new UpdateThreadie(TEMP_UPDATER, "TEMP WORD UPDATER", true) {
             @Override
             public void update() {
@@ -80,40 +76,16 @@ public class MainAndWordsListener extends ListenerAdapter {
     }
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
-        if (event.getAuthor().isBot()) return;
-
-        String message = event.getMessage().getContentRaw();
-        if (message.startsWith("!!")) {
-            Logger.write("[CommandsListener] " + event.getAuthor().getName() + " написал " + message);
-        }
-
-        /*
-        if (message.equalsIgnoreCase("!!hello")) {
-            event.getChannel().sendMessage("Привет, " + event.getAuthor().getAsMention() + "!").queue();
-        }
-        */
-    }
-
-    @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         Logger.write("[CommandsListener] Использована команда " + event.getName());
         Player p = DiscordBot.getPlayer(event.getUser());
         switch (event.getName()) {
-            case "profile":
-                profile(event, p);
-                break;
             case "read":
                 checkWord(event);
                 break;
             case "write":
                 generateWord(event, p);
                 break;
-            case "stop":
-                stop(event);
-                break;
-            default:
-                event.reply("Неизвестная команда").setEphemeral(true).queue();
         }
     }
 
@@ -165,34 +137,8 @@ public class MainAndWordsListener extends ListenerAdapter {
                     };
                     madeWord(event, p, wordSentence, wordSentences.mode());
                     break;
-                case "profile":
-                    if (buttonId[2].equals("library")) {
-                        profileLibrary(event, p, Integer.parseInt(buttonId[3]));
-                    }
             }
         }
-    }
-
-    private void profile(SlashCommandInteractionEvent event, Player player) {
-        String messageBuilder =
-                ":clipboard: Профиль:\n" +
-                ":bust_in_silhouette: Имя: " + player.getName() + "\n" +
-                ":identification_card: ID: " + player.getPlayerID() + "\n" +
-                ":moneybag: Баланс: " + player.getBalance() + "@\n" +
-                ":card_box: Личная библиотека: " + player.getWordsCount() + " слов\n";
-        event.reply(messageBuilder).setActionRow(
-                Button.primary(player.getPlayerID() + "_profile_library_0", "Личная библиотека")
-        ).queue();
-    }
-
-    private void profileLibrary(ButtonInteractionEvent event, Player p, int page) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(":books: Личная библиотека. Страница ").append(page + 1).append("\n");
-        List<String> words = p.getWords(page);
-        for (String word : words) {
-            sb.append(word).append("\n");
-        }
-        event.reply(sb.toString()).queue();
     }
 
     private void checkWord(SlashCommandInteractionEvent event) {
@@ -315,24 +261,5 @@ public class MainAndWordsListener extends ListenerAdapter {
         executor.execute(() -> {
             WordGateway.registerNewWord(p, wordSentence, mode);
         });
-    }
-
-    private void stop(SlashCommandInteractionEvent event) {
-        JSONObject jo = Utility.getJSONObject("data/server/discord.json");
-        if (!event.getUser().getId().equals(jo.getString("ownerID"))) {
-            event.reply("Бот выключился.").queue(waitingMessage -> {
-                executor.execute(() -> {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                   waitingMessage.editOriginal("Бот включился.").queue();
-                });
-            });
-        } else {
-            event.reply("Выключаю сервер...").queue();
-            Server.close();
-        }
     }
 }

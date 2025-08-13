@@ -33,9 +33,6 @@ public class WordGateway {
 
         if (word == null || definition == null) {
             switch (mode) {
-                case LETTERS -> cost *= 1;
-                case DOUBLE -> cost *= 1;
-                case TRIPLE -> cost *= 1;
                 case QUADRUPLE -> cost *= 2;
                 case RANDOM -> cost *= 4;
             }
@@ -78,5 +75,6 @@ public class WordGateway {
     public static void registerNewWord(Player p, String wordSentence, LibraryMode mode) {
         WordLibrary.addWord(wordSentence, mode, p.getPlayerID());
         p.addWord(WordLibrary.getWordie(wordSentence));
+        p.addIncome(WordLibrary.getWord(WordLibrary.getWordie(wordSentence)).getIncome());
     }
 }

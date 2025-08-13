@@ -2,10 +2,7 @@ package my.lexonix.wordgen.server;
 
 import my.lexonix.wordgen.gateway.discord.DiscordBot;
 import my.lexonix.wordgen.library.WordLibrary;
-import my.lexonix.wordgen.utility.Logger;
 import my.lexonix.wordgen.utility.UpdateThreadie;
-import my.lexonix.wordgen.utility.Utility;
-import org.json.JSONObject;
 
 import java.io.File;
 
@@ -28,7 +25,7 @@ public class Server {
             public void onClose() {
                 Players.savePlayers();
                 WordLibrary.save();
-                Players.savePlayerDebts();
+                // Players.savePlayerDebts();
             }
         }.getThread();
     }
@@ -36,7 +33,7 @@ public class Server {
     public static void main() {
         generateDirectories();
         WordLibrary.load();
-        Players.loadPlayerDebts();
+        // Players.loadPlayerDebts();
         SERVER_AUTO_UPDATE.start();
         bot.launch();
     }

@@ -20,7 +20,7 @@ public class Player {
     private final ArrayList<String> words;
     private long income;
     private long lastIncomeUpdate;
-    private String name;
+    private final String name;
 
     public Player(PlatformMode mode, String accountID, String passHash, String name) {
         String playerID = switch(mode) {
@@ -68,10 +68,12 @@ public class Player {
         words.sort(Comparator.naturalOrder());
     }
 
+    /*
     public void checkDebt() {
         this.balance += Players.getDebt(playerID);
         Players.removeDebt(playerID);
     }
+     */
 
     public void checkIncome() {
         long hours = (System.currentTimeMillis() - lastIncomeUpdate) / ONE_HOUR;
@@ -98,6 +100,11 @@ public class Player {
 
     public boolean checkPassHash(String passHash) {
         return this.passHash.equals(passHash);
+    }
+
+    public void addIncome(long delta) {
+        Logger.write("[Player] Обновление прибыли игрока " + playerID + " на " + delta);
+        this.income += delta;
     }
 
     public void addBalance(long delta) {

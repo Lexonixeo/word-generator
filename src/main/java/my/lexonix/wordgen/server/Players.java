@@ -1,10 +1,7 @@
 package my.lexonix.wordgen.server;
 
 import my.lexonix.wordgen.utility.Logger;
-import my.lexonix.wordgen.utility.NoJSONFileException;
 import my.lexonix.wordgen.utility.Utility;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +22,7 @@ public class Players {
         activePlayers.clear();
     }
 
+    /*
     public static void savePlayerDebts() {
         Logger.write("[Players] Сохранение долгов для игроков");
         JSONArray ja = new JSONArray();
@@ -67,6 +65,7 @@ public class Players {
         Logger.write("[Players] Убран долг игрока " + playerID);
         playerDebts.remove(playerID);
     }
+     */
 
     public static Player makeNewPlayer(PlatformMode mode, String accountID, String passHash, String name) {
         Logger.write("[Players] Создание игрока " + mode + " " + accountID);

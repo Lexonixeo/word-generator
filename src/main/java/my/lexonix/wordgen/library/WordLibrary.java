@@ -1,6 +1,5 @@
 package my.lexonix.wordgen.library;
 
-import my.lexonix.wordgen.generator.WordGenerator;
 import my.lexonix.wordgen.utility.Logger;
 import my.lexonix.wordgen.tokens.Token;
 import my.lexonix.wordgen.tokens.Tokenizer;
@@ -109,10 +108,6 @@ public class WordLibrary {
             case WordGen_DefHum -> WGDH;
             case WordHum_DefGen -> WHDG;
         }).get(word);
-    }
-
-    public static String getDefinition(String word) {
-        return getWord(word).getDefinition();
     }
 
     public static String getPlayerID(String word) {
