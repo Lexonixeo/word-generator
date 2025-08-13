@@ -19,15 +19,16 @@ public class Logger {
     }
 
     public static void write(String s) {
+        String message = "["
+                + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+                .format(new Date(System.currentTimeMillis()))
+                + "]: "
+                + s
+                + "\n";
+        System.out.print(message);
         try {
             FileWriter writer = new FileWriter(pathname, true);
-            writer.write(
-                    "["
-                            + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
-                            .format(new Date(System.currentTimeMillis()))
-                            + "]: "
-                            + s
-                            + "\n");
+            writer.write(message);
             writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -41,11 +42,15 @@ public class Logger {
         } catch (FileNotFoundException ex) {
             throw new RuntimeException(ex);
         }
-        stream.print(
-                "["
-                        + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
-                        .format(new Date(System.currentTimeMillis()))
-                        + "]: ");
+        String message = "["
+                + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+                .format(new Date(System.currentTimeMillis()))
+                + "]: ";
+        stream.print(message);
+        System.out.print(message);
+
         e.printStackTrace(stream);
+        e.printStackTrace(System.out);
+        System.out.println();
     }
 }

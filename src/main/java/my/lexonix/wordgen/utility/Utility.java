@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -122,6 +123,10 @@ public class Utility {
         }
         byte[] encodedhash = digest.digest(secret.getBytes(StandardCharsets.UTF_8));
         return bytesToHex(encodedhash);
+    }
+
+    public static String intToHex(int x) {
+        return bytesToHex(ByteBuffer.allocate(4).putInt(x).array());
     }
 
     private static String bytesToHex(byte[] hash) {

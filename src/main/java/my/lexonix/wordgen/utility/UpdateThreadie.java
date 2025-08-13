@@ -15,6 +15,7 @@ public abstract class UpdateThreadie {
                     Logger.write("[" + Thread.currentThread().getName() + "] Прерывание 1");
                     onClose();
                     closed = true;
+                    Logger.write("[" + Thread.currentThread().getName() + "] Выключен");
                     break;
                 }
             }
@@ -22,6 +23,7 @@ public abstract class UpdateThreadie {
                 Logger.write("[" + Thread.currentThread().getName() + "] Прерывание 2");
                 onClose();
                 // closed = true;
+                Logger.write("[" + Thread.currentThread().getName() + "] Выключен");
             }
         });
         thread.setName(name);

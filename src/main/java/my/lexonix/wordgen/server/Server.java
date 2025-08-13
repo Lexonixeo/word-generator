@@ -1,13 +1,17 @@
 package my.lexonix.wordgen.server;
 
 import my.lexonix.wordgen.gateway.discord.DiscordBot;
+import my.lexonix.wordgen.library.WordLibrary;
+import my.lexonix.wordgen.utility.Logger;
 import my.lexonix.wordgen.utility.UpdateThreadie;
+import my.lexonix.wordgen.utility.Utility;
+import org.json.JSONObject;
 
 import java.io.File;
 
 public class Server {
     private static final Thread SERVER_AUTO_UPDATE;
-    private static final long SAU_TIME = 1000 * 60 * 5; // 5 min
+    private static final long SAU_TIME = 1000 * 60; // 1 min
     private static final DiscordBot bot;
 
     static {
@@ -17,11 +21,13 @@ public class Server {
             @Override
             public void update() {
                 Players.savePlayers();
+                WordLibrary.save();
             }
 
             @Override
             public void onClose() {
                 Players.savePlayers();
+                WordLibrary.save();
                 Players.savePlayerDebts();
             }
         }.getThread();
@@ -29,6 +35,7 @@ public class Server {
 
     public static void main() {
         generateDirectories();
+        WordLibrary.load();
         Players.loadPlayerDebts();
         SERVER_AUTO_UPDATE.start();
         bot.launch();
@@ -38,12 +45,13 @@ public class Server {
         new File("data").mkdirs();
         new File("data/logs").mkdirs();
         new File("data/server").mkdirs();
+        new File("data/server/library").mkdirs();
         new File("data/server/players").mkdirs();
         new File("data/tables").mkdirs();
         new File("data/texts").mkdirs();
     }
 
-    private static void close() {
+    public static void close() {
         bot.stop();
         SERVER_AUTO_UPDATE.interrupt();
     }

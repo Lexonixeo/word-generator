@@ -13,11 +13,13 @@ public class Players {
     // игроки, которые были активны с последней чистки
     private static final ArrayList<Player> activePlayers = new ArrayList<>();
     private static final HashMap<String, Long> playerDebts = new HashMap<>(); // долги для выдачи игрокам
+    private static final ArrayList<String> moderatorsID = new ArrayList<>();
 
     public static void savePlayers() {
         Logger.write("[Players] Сохранение активных игроков");
         for (Player p : activePlayers) {
-            p.checkDebt();
+            // p.checkDebt();
+            p.checkIncome();
             p.save();
         }
         activePlayers.clear();
@@ -48,6 +50,11 @@ public class Players {
         }
     }
 
+    public static void addDebt(String playerID, long debt) {
+        Logger.write("[Players] Добавили в долг игроку " + debt);
+        playerDebts.put(playerID, getDebt(playerID) + debt);
+    }
+
     public static long getDebt(String playerID) {
         if (playerDebts.containsKey(playerID)) {
             return playerDebts.get(playerID);
@@ -61,9 +68,9 @@ public class Players {
         playerDebts.remove(playerID);
     }
 
-    public static Player makeNewPlayer(PlatformMode mode, String accountID, String password) {
+    public static Player makeNewPlayer(PlatformMode mode, String accountID, String passHash, String name) {
         Logger.write("[Players] Создание игрока " + mode + " " + accountID);
-        Player p = new Player(mode, accountID, Utility.getSHA256(password));
+        Player p = new Player(mode, accountID, passHash, name);
         if (Utility.isFileExists("data/server/players/" + p.getPlayerID() + ".json")) {
             throw new AuthorizationException("Пользователь уже существует!");
         }
@@ -71,7 +78,14 @@ public class Players {
         return p;
     }
 
-    public static Player getPlayer(String playerID, String passHash) {
+    public static Player getPlayer(PlatformMode mode, String accountID, String passHash) {
+        String playerID = switch(mode) {
+            case CONSOLE -> "c";
+            case TELEGRAM -> "t";
+            case DISCORD -> "d";
+        };
+        playerID += accountID;
+
         Logger.write("[Players] Получение игрока " + playerID);
         for (Player p : activePlayers) {
             if (p.getPlayerID().equals(playerID)) {
@@ -85,5 +99,10 @@ public class Players {
         Player p = new Player(playerID, passHash);
         activePlayers.add(p);
         return p;
+    }
+
+    public boolean isModerator(Player p) {
+        return false;
+        // TODO
     }
 }

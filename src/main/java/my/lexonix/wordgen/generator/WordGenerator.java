@@ -17,10 +17,15 @@ public class WordGenerator {
     private final static HashMap<String, Table> tables = new HashMap<>();
     private final static HashMap<TokenizerMode, LinkedList<String>> wordsQueueMap = new HashMap<>();
     private final static int TOKEN_LENGTH = 1000;
-    private final static WordGenerator instance;
+    private final static HashMap<TokenizerMode, Object> synchMap = new HashMap<>();
 
     static {
-        instance = new WordGenerator();
+        synchMap.put(LETTERS, 1);
+        synchMap.put(DOUBLE, 2);
+        synchMap.put(TRIPLE, 3);
+        synchMap.put(QUADRUPLE, 4);
+        synchMap.put(RANDOM, 5);
+        synchMap.put(WORDS, 6);
     }
 
     public static void main() {
@@ -64,7 +69,7 @@ public class WordGenerator {
     }
 
     public static String makeWord(TokenizerMode mode) {
-        Logger.write("[WordGenerator] Создание слова");
+        Logger.write("[WordGenerator] Создание слова мода " + mode);
         if (!wordsQueueMap.containsKey(mode)) {
             wordsQueueMap.put(mode, new LinkedList<>());
         }
@@ -111,7 +116,7 @@ public class WordGenerator {
     }
 
     public static String makeWord(String startWord, TokenizerMode mode) {
-        Logger.write("[WordGenerator] Создание определения слова " + startWord);
+        Logger.write("[WordGenerator] Создание определения слова " + startWord + " мода " + mode);
         if (!wordsQueueMap.containsKey(mode)) {
             wordsQueueMap.put(mode, new LinkedList<>());
         }
@@ -156,7 +161,7 @@ public class WordGenerator {
         return UPPER_LETTERS.contains(String.valueOf(c));
     }
 
-    public static WordGenerator getInstance() {
-        return instance;
+    public static Object getSynch(TokenizerMode mode) {
+        return synchMap.get(mode);
     }
 }
