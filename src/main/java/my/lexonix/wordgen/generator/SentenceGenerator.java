@@ -36,7 +36,8 @@ public class SentenceGenerator {
     }
 
     public static String makeSentence(Table table, int tokensLength, String begin) {
-        return begin + Tokenizer.getSeparator(table.getMode()) + makeSentence(table, tokensLength, Tokenizer.getLastToken(begin, table.getMode()), false);
+        return begin + Tokenizer.getSeparator(table.getMode()) +
+                makeSentence(table, tokensLength, Tokenizer.getLastToken(begin, table.getMode()), false);
     }
 
     public static String makeSentence(Table table, int tokensLength, Token firstToken, boolean showFirstToken) {
@@ -61,12 +62,6 @@ public class SentenceGenerator {
     public static void saveSentence(Table table, String path, int tokensLength) {
         ArrayList<String> strings = new ArrayList<>();
         strings.add(makeSentence(table, tokensLength));
-        Utility.saveFile(path, strings);
-    }
-
-    public static void saveSentence(Table table, String path, int tokensLength, Token firstToken, boolean showFirstToken) {
-        ArrayList<String> strings = new ArrayList<>();
-        strings.add(makeSentence(table, tokensLength, firstToken, showFirstToken));
         Utility.saveFile(path, strings);
     }
 
