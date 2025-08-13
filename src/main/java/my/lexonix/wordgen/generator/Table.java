@@ -24,7 +24,7 @@ public class Table {
     private final boolean isReadOnly;
 
     public Table(String path, boolean isReadOnly) {
-        Logger.write("Получение таблички " + path);
+        Logger.write("[Table] Получение таблички " + path);
         this.isReadOnly = isReadOnly;
         table = new HashMap<>();
         tableRC = new HashMap<>();
@@ -38,7 +38,7 @@ public class Table {
     }
 
     public Table(String path, TokenizerMode mode) {
-        Logger.write("Новая табличка! " + path + " : " + mode);
+        Logger.write("[Table] Новая табличка! " + path + " : " + mode);
         table = new HashMap<>();
         tableRC = new HashMap<>();
         randomCollection = new RandomCollection<>(random);
@@ -72,7 +72,7 @@ public class Table {
     }
 
     public void updateTable(String textPath) {
-        Logger.write("Обновление таблички текстом " + textPath);
+        Logger.write("[Table] Обновление таблички текстом " + textPath);
         int k = switch(mode) {
             case WORDS, LETTERS -> 1;
             case DOUBLE -> 2;
@@ -92,7 +92,7 @@ public class Table {
 
     public void saveTableJSON() {
         assert !isReadOnly : 527014032;
-        Logger.write("Сохранение в JSON таблицы " + path);
+        Logger.write("[Table] Сохранение в JSON таблицы " + path);
         JSONObject j = new JSONObject();
         j.put("m", mode.name()); // mode
         JSONArray firstTokens = new JSONArray();
@@ -120,7 +120,7 @@ public class Table {
     @Deprecated
     public void saveTable() {
         assert !isReadOnly : 495324325;
-        Logger.write("Сохранение в TXT таблицы " + path);
+        Logger.write("[Table] Сохранение в TXT таблицы " + path);
 
         ArrayList<String> strings = new ArrayList<>();
         strings.add(mode.name());
@@ -157,7 +157,7 @@ public class Table {
 
     @Deprecated
     private static Pair<HashMap<Token, HashMap<Token, Integer>>, TokenizerMode> readTable(String path) {
-        Logger.write("Чтение TXT таблицы " + path);
+        Logger.write("[Table] Чтение TXT таблицы " + path);
         HashMap<Token, HashMap<Token, Integer>> table = new HashMap<>();
         ArrayList<String> strings = Utility.readFile(path);
         TokenizerMode mode = TokenizerMode.valueOf(strings.getFirst());
@@ -175,7 +175,7 @@ public class Table {
     }
 
     private TokenizerMode readTableJSON(String path) {
-        Logger.write("Чтение JSON таблицы " + path);
+        Logger.write("[Table] Чтение JSON таблицы " + path);
 
         JSONObject js = Utility.getJSONObject(path);
         TokenizerMode mode = TokenizerMode.valueOf(js.getString("m"));
@@ -199,7 +199,7 @@ public class Table {
     }
 
     private TokenizerMode readRCTableJSON(String path) {
-        Logger.write("Чтение JSON таблицы (RC) " + path);
+        Logger.write("[Table] Чтение JSON таблицы (RC) " + path);
 
         JSONObject js = Utility.getJSONObject(path);
         TokenizerMode mode = TokenizerMode.valueOf(js.getString("m"));

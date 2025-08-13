@@ -41,7 +41,7 @@ public class SentenceGenerator {
     }
 
     public static String makeSentence(Table table, int tokensLength, Token firstToken, boolean showFirstToken) {
-        Logger.write("Создание предложения в " + tokensLength + " токенов и мода " + table.getMode());
+        Logger.write("[SentenceGenerator] Создание предложения в " + tokensLength + " токенов и мода " + table.getMode());
         StringBuilder sb = new StringBuilder();
 
         Token nextToken = firstToken;

@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Logger {
+    // мейби перейти на Logback? но нз
     private static final String pathname;
 
     static {

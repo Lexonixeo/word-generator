@@ -19,7 +19,7 @@ public class Tokenizer {
     }
 
     public static ArrayList<Token> tokenize(String s, TokenizerMode mode) {
-        Logger.write("Токенизация по моду " + mode);
+        Logger.write("[Tokenizer] Токенизация по моду " + mode);
         return switch (mode) {
             case WORDS -> getWords(s);
             case LETTERS -> getLetters(s);

@@ -53,7 +53,7 @@ public class Player {
     }
 
     public void save() {
-        Logger.write("Сохранение игрока " + playerID);
+        Logger.write("[Player] Сохранение игрока " + playerID);
         JSONObject json = new JSONObject();
         json.put("p", playerID); // playerID
         json.put("h", passHash); // passHash
@@ -71,7 +71,7 @@ public class Player {
     }
 
     public void addBalance(long delta) {
-        Logger.write("Обновление баланса игрока " + playerID + " на " + delta);
+        Logger.write("[Player] Обновление баланса игрока " + playerID + " на " + delta);
         this.balance += delta;
     }
 

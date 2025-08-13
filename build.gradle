@@ -66,6 +66,17 @@ dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     implementation("org.json:json:20250517")
+
+    implementation("ch.qos.logback:logback-classic:1.5.6")
+    implementation("net.dv8tion:JDA:5.6.1") { // replace $version with the latest version
+        // Optionally disable audio natives to reduce jar size by excluding `opus-java` and `tink`
+        // Gradle DSL:
+        // exclude module: 'opus-java' // required for encoding audio into opus, not needed if audio is already provided in opus encoding
+        // exclude module: 'tink' // required for encrypting and decrypting audio
+        // Kotlin DSL:
+        // exclude(module="opus-java") // required for encoding audio into opus, not needed if audio is already provided in opus encoding
+        // exclude(module="tink") // required for encrypting and decrypting audio
+    }
 }
 
 test {

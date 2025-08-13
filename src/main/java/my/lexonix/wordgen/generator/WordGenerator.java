@@ -17,6 +17,11 @@ public class WordGenerator {
     private final static HashMap<String, Table> tables = new HashMap<>();
     private final static HashMap<TokenizerMode, LinkedList<String>> wordsQueueMap = new HashMap<>();
     private final static int TOKEN_LENGTH = 1000;
+    private final static WordGenerator instance;
+
+    static {
+        instance = new WordGenerator();
+    }
 
     public static void main() {
         ArrayList<String> a = new ArrayList<>();
@@ -44,12 +49,12 @@ public class WordGenerator {
     }
 
     private static Table getTable(TokenizerMode mode) {
-        Logger.write("WordGenerator чтение таблицы мода " + mode);
+        Logger.write("[WordGenerator] Чтение таблицы мода " + mode);
         if (!tables.containsKey(mode.name())) {
             try {
                 addTable(mode);
             } catch (OutOfMemoryError e) {
-                Logger.write("WordGenerator очистка списка таблиц");
+                Logger.write("[WordGenerator] Очистка списка таблиц");
                 tables.clear();
                 System.gc();
                 addTable(mode);
@@ -59,7 +64,7 @@ public class WordGenerator {
     }
 
     public static String makeWord(TokenizerMode mode) {
-        Logger.write("Создание слова");
+        Logger.write("[WordGenerator] Создание слова");
         if (!wordsQueueMap.containsKey(mode)) {
             wordsQueueMap.put(mode, new LinkedList<>());
         }
@@ -106,7 +111,7 @@ public class WordGenerator {
     }
 
     public static String makeWord(String startWord, TokenizerMode mode) {
-        Logger.write("Создание определения слова " + startWord);
+        Logger.write("[WordGenerator] Создание определения слова " + startWord);
         if (!wordsQueueMap.containsKey(mode)) {
             wordsQueueMap.put(mode, new LinkedList<>());
         }
@@ -149,5 +154,9 @@ public class WordGenerator {
 
     private static boolean isUpper(char c) {
         return UPPER_LETTERS.contains(String.valueOf(c));
+    }
+
+    public static WordGenerator getInstance() {
+        return instance;
     }
 }

@@ -7,19 +7,19 @@ public abstract class UpdateThreadie {
         thread = new Thread(() -> {
             boolean closed = false;
             while (!Thread.interrupted()) {
-                Logger.write(Thread.currentThread().getName() + " update");
+                Logger.write("[" + Thread.currentThread().getName() + "] Выполнение действий");
                 update();
                 try {
                     Thread.sleep(sleepTime);
                 } catch (InterruptedException e) {
-                    Logger.write(Thread.currentThread().getName() + " interrupted 1");
+                    Logger.write("[" + Thread.currentThread().getName() + "] Прерывание 1");
                     onClose();
                     closed = true;
                     break;
                 }
             }
             if (!closed) {
-                Logger.write(Thread.currentThread().getName() + " interrupted 2");
+                Logger.write("[" + Thread.currentThread().getName() + "] Прерывание 2");
                 onClose();
                 // closed = true;
             }
