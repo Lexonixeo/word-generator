@@ -77,7 +77,8 @@ public class WordLibrary {
 
     public static void addWord(String word, String def, LibraryMode mode, String playerID) {
         Logger.write("[WordLibrary] Добавление в библиотеку слова " + word);
-        if (WORD_MODES.containsKey(word.toUpperCase())) {
+        String newWord = removePunctuation(word.toUpperCase());
+        if (WORD_MODES.containsKey(newWord)) {
             throw new WordExistsException("Слово уже существует!");
         }
         (switch (mode) {
@@ -85,9 +86,9 @@ public class WordLibrary {
             case WordHum_DefHum -> WHDH;
             case WordGen_DefHum -> WGDH;
             case WordHum_DefGen -> WHDG;
-        }).put(word.toUpperCase(), new Word(word.toUpperCase(), def, playerID));
-        WORD_MODES.put(word.toUpperCase(), mode);
-        WORD_OWNERS.put(word.toUpperCase(), playerID);
+        }).put(newWord, new Word(newWord, def, playerID));
+        WORD_MODES.put(newWord, mode);
+        WORD_OWNERS.put(newWord, playerID);
     }
 
     public static void addWord(String sentence, LibraryMode mode, String playerID) {
@@ -115,7 +116,19 @@ public class WordLibrary {
     }
 
     public static String getWordie(String wordSentence) {
-        return Tokenizer.tokenize(wordSentence, TokenizerMode.WORDS).getFirst().toString();
+        return removePunctuation(Tokenizer.tokenize(wordSentence, TokenizerMode.WORDS)
+                .getFirst().toString().toUpperCase());
+    }
+
+    public static String removePunctuation(String word) {
+        StringBuilder ans = new StringBuilder();
+        for (int i = 0; i < word.length(); i++) {
+            char c = word.charAt(i);
+            if (!Tokenizer.PUNCTUATION_ALPHABET.contains(String.valueOf(c))) {
+                ans.append(c);
+            }
+        }
+        return ans.toString();
     }
 
     public static boolean isWordExists(String word) {

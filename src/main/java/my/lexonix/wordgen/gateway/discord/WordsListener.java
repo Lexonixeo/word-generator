@@ -155,9 +155,13 @@ public class WordsListener extends ListenerAdapter {
                     ":identification_card: ID владельца: " + w.getOwnerID() + "\n" +
                             ":moneybag: Стоимость: " + w.getPrice() + "@\n" +
                             ":chart_with_upwards_trend: Прибыль: " + w.getIncome() + "@/ч\n" +
-                            ":page_with_curl: Слово: \n" +
+                            ":page_with_curl: Слово: " +
                             w.getSentence();
             event.reply(messageBuilder).queue();
+            // TODO
+            // кнопка пожаловаться/заблокировать
+            // кнопки редактирования
+            // отправить на турнир
         });
     }
 
@@ -221,7 +225,7 @@ public class WordsListener extends ListenerAdapter {
         final String word = w.word();
         final String definition = w.definition();
 
-        event.reply("Подождите...").setEphemeral(true).queue(waitingMessage -> {
+        event.editMessage("Подождите...").setComponents().queue(waitingMessage -> {
             try {
                 p.addBalance(-w.cost());
             } catch (NotEnoughMoneyException e) {
@@ -257,7 +261,7 @@ public class WordsListener extends ListenerAdapter {
     }
 
     private void madeWord(ButtonInteractionEvent event, Player p, String wordSentence, LibraryMode mode) {
-        event.reply(":tada: Поздравляем! Теперь это слово - ваше!\n" + wordSentence).queue();
+        event.editMessage(":tada: Поздравляем! Теперь это слово - ваше!\n" + wordSentence).setComponents().queue();
         executor.execute(() -> WordGateway.registerNewWord(p, wordSentence, mode));
     }
 }

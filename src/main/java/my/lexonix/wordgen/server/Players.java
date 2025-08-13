@@ -9,7 +9,7 @@ import java.util.HashMap;
 public class Players {
     // игроки, которые были активны с последней чистки
     private static final ArrayList<Player> activePlayers = new ArrayList<>();
-    private static final HashMap<String, Long> playerDebts = new HashMap<>(); // долги для выдачи игрокам
+    // private static final HashMap<String, Long> playerDebts = new HashMap<>(); // долги для выдачи игрокам
     private static final ArrayList<String> moderatorsID = new ArrayList<>();
 
     public static void savePlayers() {

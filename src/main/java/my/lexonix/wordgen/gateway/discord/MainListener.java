@@ -39,12 +39,18 @@ public class MainListener extends ListenerAdapter {
         Logger.write("[CommandsListener] Использована команда " + event.getName());
         Player p = DiscordBot.getPlayer(event.getUser());
         switch (event.getName()) {
+            case "menu": // случайное слово, слово дня, профиль и т.д, + профиль модератора // TODO
+                break;
             case "profile":
                 profile(event, p);
                 break;
             case "stop":
                 stop(event);
                 break;
+            case "help":
+                help(event);
+                break;
+                // TODO: перевод денег и т.д.
         }
     }
 
@@ -60,6 +66,10 @@ public class MainListener extends ListenerAdapter {
                     }
             }
         }
+    }
+
+    private void help(SlashCommandInteractionEvent event) {
+        // TODO
     }
 
     private void profile(SlashCommandInteractionEvent event, Player player) {
@@ -81,7 +91,10 @@ public class MainListener extends ListenerAdapter {
         for (String word : words) {
             sb.append(word).append("\n");
         }
-        event.reply(sb.toString()).queue();
+        event.editMessage(sb.toString()).setActionRow(
+                Button.primary(p.getPlayerID() + "_profile_library_" + (page - 1), "Назад"),
+                Button.primary(p.getPlayerID() + "_profile_library_" + (page + 1), "Вперед")
+        ).queue();
     }
 
     private void stop(SlashCommandInteractionEvent event) {

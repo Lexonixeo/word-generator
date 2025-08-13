@@ -136,6 +136,7 @@ public class Player {
     }
 
     public List<String> getWords(int page) {
-        return words.subList(Math.min(page * 10, words.size()), Math.min((page + 1) * 10, words.size()));
+        return words.subList(Math.min(Math.max(page * 10, 0), words.size()),
+                Math.max(Math.min((page + 1) * 10, words.size()), 0));
     }
 }
