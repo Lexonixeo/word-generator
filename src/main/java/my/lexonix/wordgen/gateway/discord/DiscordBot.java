@@ -20,6 +20,7 @@ public class DiscordBot extends JDABuilder {
     private JDA jda;
     private final MainListener ml = new MainListener();
     private final WordsListener wl = new WordsListener();
+    private final BattleListener bl = new BattleListener();
 
     public static void main() {
         DiscordBot bot = new DiscordBot();
@@ -41,7 +42,8 @@ public class DiscordBot extends JDABuilder {
         );
         addEventListeners(ml);
         addEventListeners(wl);
-        setActivity(Activity.playing("Type /profile"));
+        addEventListeners(bl);
+        setActivity(Activity.playing("Введи /menu"));
     }
 
     public void launch() {

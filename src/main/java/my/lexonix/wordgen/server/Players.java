@@ -1,7 +1,10 @@
 package my.lexonix.wordgen.server;
 
 import my.lexonix.wordgen.utility.Logger;
+import my.lexonix.wordgen.utility.NoJSONFileException;
 import my.lexonix.wordgen.utility.Utility;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,15 +14,39 @@ public class Players {
     private static final ArrayList<Player> activePlayers = new ArrayList<>();
     // private static final HashMap<String, Long> playerDebts = new HashMap<>(); // долги для выдачи игрокам
     private static final ArrayList<String> moderatorsID = new ArrayList<>();
+    private static final HashMap<String, String> players = new HashMap<>(); // playerId, name;
 
     public static void savePlayers() {
         Logger.write("[Players] Сохранение активных игроков");
         for (Player p : activePlayers) {
+            players.put(p.getPlayerID(), p.getName());
             // p.checkDebt();
             p.checkIncome();
             p.save();
         }
         activePlayers.clear();
+
+        JSONObject jsonObject = new JSONObject();
+        for (String playerID : players.keySet()) {
+            jsonObject.put(playerID, players.get(playerID));
+        }
+        Utility.saveJSONObject("data/server/players/players.json", jsonObject, 4);
+    }
+
+    public static void loadPlayers() {
+        try {
+            JSONObject jsonObject = Utility.getJSONObject("data/server/players/players.json");
+            for (String playerID : jsonObject.keySet()) {
+                players.put(playerID, jsonObject.getString(playerID));
+            }
+        } catch (NoJSONFileException ignored) {}
+    }
+
+    public static void loadModerators() {
+        JSONArray ja = Utility.getJSONArray("data/server/moderators.json");
+        for (int i = 0; i < ja.length(); i++) {
+            moderatorsID.add(ja.getString(i));
+        }
     }
 
     /*
@@ -73,6 +100,7 @@ public class Players {
         if (Utility.isFileExists("data/server/players/" + p.getPlayerID() + ".json")) {
             throw new AuthorizationException("Пользователь уже существует!");
         }
+        players.put(p.getPlayerID(), p.getName());
         activePlayers.add(p);
         return p;
     }
@@ -96,12 +124,16 @@ public class Players {
             }
         }
         Player p = new Player(playerID, passHash);
+        players.put(p.getPlayerID(), p.getName());
         activePlayers.add(p);
         return p;
     }
 
-    public boolean isModerator(Player p) {
-        return false;
-        // TODO
+    public static boolean isModerator(Player p) {
+        return moderatorsID.contains(p.getPlayerID());
+    }
+
+    public static String getName(String playerID) {
+        return players.get(playerID);
     }
 }

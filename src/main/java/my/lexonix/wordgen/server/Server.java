@@ -33,7 +33,9 @@ public class Server {
     public static void main() {
         generateDirectories();
         WordLibrary.load();
+        Players.loadModerators();
         // Players.loadPlayerDebts();
+        Players.loadPlayers();
         SERVER_AUTO_UPDATE.start();
         bot.launch();
     }

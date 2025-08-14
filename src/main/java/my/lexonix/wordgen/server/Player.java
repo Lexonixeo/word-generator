@@ -1,5 +1,6 @@
 package my.lexonix.wordgen.server;
 
+import my.lexonix.wordgen.library.NoWordException;
 import my.lexonix.wordgen.library.WordLibrary;
 import my.lexonix.wordgen.utility.Logger;
 import my.lexonix.wordgen.utility.NoJSONFileException;
@@ -60,12 +61,16 @@ public class Player {
         this.words = new ArrayList<>();
         for (int i = 0; i < ja.length(); i++) {
             String word = ja.getString(i);
-            if (WordLibrary.getPlayerID(word).equals(playerID)) {
-                this.words.add(word);
-            }
-            income += WordLibrary.getWord(word).getIncome();
+            try {
+                if (WordLibrary.getPlayerID(word).equals(playerID)) {
+                    this.words.add(word);
+                    income += WordLibrary.getWord(word).getIncome();
+                }
+            } catch (NullPointerException ignored) {}
         }
+        checkIncome();
         words.sort(Comparator.naturalOrder());
+        save();
     }
 
     /*
