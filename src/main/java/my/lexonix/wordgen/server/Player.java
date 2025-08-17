@@ -21,6 +21,7 @@ public class Player {
     private final ArrayList<String> words;
     private long income;
     private long lastIncomeUpdate;
+    private long lastIncome;
     private final String name;
 
     public Player(PlatformMode mode, String accountID, String passHash, String name) {
@@ -36,6 +37,7 @@ public class Player {
         this.words = new ArrayList<>();
         this.name = name;
         this.income = 0;
+        this.lastIncome = 0;
         this.lastIncomeUpdate = System.currentTimeMillis();
     }
 
@@ -56,6 +58,7 @@ public class Player {
         this.name = json.getString("n"); // name
         this.lastIncomeUpdate = json.getLong("u"); // lastIncomeUpdate
         this.income = 0;
+        this.lastIncome = json.getLong("l"); // lastIncome
 
         JSONArray ja = json.getJSONArray("w"); // words
         this.words = new ArrayList<>();
@@ -83,10 +86,16 @@ public class Player {
     public void checkIncome() {
         long hours = (System.currentTimeMillis() - lastIncomeUpdate) / ONE_HOUR;
         lastIncomeUpdate += hours * ONE_HOUR;
-        addBalance(income * hours);
+        addBalance(lastIncome * hours);
+        // не нада нам куча денег если чел отправил слово в турнир, и зашел как тока он закончился
+        // блин, а если чел раздал всем свои слова и вышел?
+        // при сохранении проверяем доход!
+        // долгосрочно проблемы будут тока если у него купят/удалят слово во время отсутствия
+        lastIncome = income;
     }
 
     public void save() {
+        checkIncome();
         Logger.write("[Player] Сохранение игрока " + playerID);
         JSONObject json = new JSONObject();
         json.put("p", playerID); // playerID
@@ -100,6 +109,7 @@ public class Player {
         }
         json.put("w", ja); // words
         json.put("u", lastIncomeUpdate); // lastIncomeUpdate
+        json.put("l", lastIncome); // lastIncome
         Utility.saveJSONObject("data/server/players/" + playerID + ".json", json, 4);
     }
 
