@@ -3,8 +3,8 @@ package my.lexonix.wordgen.generator;
 import my.lexonix.wordgen.tokens.Token;
 import my.lexonix.wordgen.tokens.Tokenizer;
 import my.lexonix.wordgen.tokens.TokenizerMode;
+import my.lexonix.wordgen.utility.Locale;
 import my.lexonix.wordgen.utility.Logger;
-import my.lexonix.wordgen.utility.Pair;
 import my.lexonix.wordgen.utility.RandomCollection;
 import my.lexonix.wordgen.utility.Utility;
 import org.json.JSONArray;
@@ -26,7 +26,7 @@ public class Table {
     private final boolean isReadOnly;
 
     public Table(String path, boolean isReadOnly) {
-        log.write("Получение таблички " + path);
+        log.write(Locale.getInstance("sys").get("log_table_read").replace("{path}", path));
         this.isReadOnly = isReadOnly;
         table = new HashMap<>();
         tableRC = new HashMap<>();
@@ -40,7 +40,8 @@ public class Table {
     }
 
     public Table(String path, TokenizerMode mode) {
-        log.write("Новая табличка! " + path + " : " + mode);
+        log.write(Locale.getInstance("sys").get("log_table_new").replace("{path}", path)
+                .replace("{mode}", mode.toString()));
         table = new HashMap<>();
         tableRC = new HashMap<>();
         randomCollection = new RandomCollection<>(random);
@@ -60,7 +61,8 @@ public class Table {
     public Token getRandomToken(Token before) {
         if (!table.containsKey(before) && !tableRC.containsKey(before)) {
             // может быть просто взять случайный токен невзирая на before? TODO
-            throw new NoTokenException("В текущей модели отсутствует продолжение для токена " + before);
+            throw new NoTokenException(Locale.getInstance("sys").get("exc_nexttoken_not_exists")
+                    .replace("{token}", before.toString()));
         }
 
         if (!isReadOnly) {
@@ -75,7 +77,7 @@ public class Table {
     }
 
     public void updateTable(String textPath) {
-        log.write("Обновление таблички текстом " + textPath);
+        log.write(Locale.getInstance("sys").get("log_table_update").replace("{path}", textPath));
         int k = switch(mode) {
             case WORDS, LETTERS -> 1;
             case DOUBLE -> 2;
@@ -95,7 +97,7 @@ public class Table {
 
     public void saveTableJSON() {
         assert !isReadOnly : 527014032;
-        log.write("Сохранение в JSON таблицы " + path);
+        log.write(Locale.getInstance("sys").get("log_table_saveJSON").replace("{path}", path));
         JSONObject j = new JSONObject();
         j.put("m", mode.name()); // mode
         JSONArray firstTokens = new JSONArray();
@@ -184,7 +186,7 @@ public class Table {
      */
 
     private TokenizerMode readTableJSON(String path) {
-        log.write("Чтение JSON таблицы " + path);
+        log.write(Locale.getInstance("sys").get("log_table_readJSON").replace("{path}", path));
 
         JSONObject js = Utility.getJSONObject(path);
         TokenizerMode mode = TokenizerMode.valueOf(js.getString("m"));
@@ -208,7 +210,7 @@ public class Table {
     }
 
     private TokenizerMode readRCTableJSON(String path) {
-        log.write("Чтение JSON таблицы (RC) " + path);
+        log.write(Locale.getInstance("sys").get("log_table_readRC").replace("{path}", path));
 
         JSONObject js = Utility.getJSONObject(path);
         TokenizerMode mode = TokenizerMode.valueOf(js.getString("m"));

@@ -198,11 +198,15 @@ public class WordsListener extends ListenerAdapter {
                             ":chart_with_upwards_trend: Прибыль: " + w.getIncome() + "@/ч\n" +
                             ":page_with_curl: Слово: " + wordSentence;
             List<ActionRow> rows = new ArrayList<>();
-            if (p.getPlayerID().equals(w.getOwnerID())) {
+            if (p.getPlayerID().equals(w.getOwnerID()) && !w.isConst()) {
                 rows.add(ActionRow.of(
-                        Button.primary(p.getPlayerID() + "_wordprice_" + w.getWord(), "Изменить стоимость"),
-                        Button.primary(p.getPlayerID() + "_worddef_" + w.getWord(), "Изменить определение"),
-                        Button.primary(p.getPlayerID() + "_battlesend_" + w.getWord(), "Отправить на турнир")
+                        Button.primary(p.getPlayerID() + "_wordprice_" + w.getWord(), "Изменить стоимость").asDisabled(),
+                        Button.primary(p.getPlayerID() + "_worddef_" + w.getWord(), "Изменить определение").asDisabled(),
+                        Button.primary(p.getPlayerID() + "_battlesend_" + w.getWord(), "Отправить на турнир").asDisabled()
+                ));
+            } else if (p.getPlayerID().equals(w.getOwnerID())) {
+                rows.add(ActionRow.of(
+                        Button.primary(p.getPlayerID() + "_battlesend_" + w.getWord(), "Отправить на турнир").asDisabled()
                 ));
             }
             if (Players.isModerator(p)) {
@@ -233,10 +237,14 @@ public class WordsListener extends ListenerAdapter {
                             ":chart_with_upwards_trend: Прибыль: " + w.getIncome() + "@/ч\n" +
                             ":page_with_curl: Слово: " + wordSentence;
             List<ActionRow> rows = new ArrayList<>();
-            if (p.getPlayerID().equals(w.getOwnerID())) {
+            if (p.getPlayerID().equals(w.getOwnerID()) && !w.isConst()) {
                 rows.add(ActionRow.of(
                         Button.primary(p.getPlayerID() + "_wordprice_" + w.getWord(), "Изменить стоимость").asDisabled(),
                         Button.primary(p.getPlayerID() + "_worddef_" + w.getWord(), "Изменить определение").asDisabled(),
+                        Button.primary(p.getPlayerID() + "_battlesend_" + w.getWord(), "Отправить на турнир").asDisabled()
+                ));
+            } else if (p.getPlayerID().equals(w.getOwnerID())) {
+                rows.add(ActionRow.of(
                         Button.primary(p.getPlayerID() + "_battlesend_" + w.getWord(), "Отправить на турнир").asDisabled()
                 ));
             }
@@ -292,7 +300,7 @@ public class WordsListener extends ListenerAdapter {
                 return;
             } else if (word != null && word.length() == 1) {
                 log.write("Слово " + word + " слишком мало.");
-                waitingMessage.editOriginal(":x: Слово слишком мало для создания!").queue();
+                waitingMessage.editOriginal(":x: Слово слишком мало для создания с таким режимом!").queue();
                 return;
             } else if (word != null && word.length() > 50) {
                 log.write("Слово " + word + " слишком большое.");

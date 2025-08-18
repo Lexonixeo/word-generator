@@ -3,6 +3,7 @@ package my.lexonix.wordgen.generator;
 import my.lexonix.wordgen.tokens.Token;
 import my.lexonix.wordgen.tokens.Tokenizer;
 import my.lexonix.wordgen.tokens.TokenizerMode;
+import my.lexonix.wordgen.utility.Locale;
 import my.lexonix.wordgen.utility.Logger;
 import my.lexonix.wordgen.utility.Utility;
 
@@ -39,7 +40,8 @@ public class WordGenerator {
 
     private static void addTable(TokenizerMode mode) {
         switch (mode) {
-            case WORDS -> throw new NoModeAvailableException("Не поддерживается мод " + mode + " для создания новых слов.");
+            case WORDS -> throw new NoModeAvailableException(Locale.getInstance("sys")
+                    .get("exc_mode_notavailable").replace("{mode}", mode.toString()));
             case LETTERS -> tables.put(mode.name(), new Table("data/tables/dal1.json", true));
             case DOUBLE -> tables.put(mode.name(), new Table("data/tables/dal2.json", true));
             case TRIPLE -> tables.put(mode.name(), new Table("data/tables/dal3.json", true));
@@ -49,12 +51,12 @@ public class WordGenerator {
     }
 
     private static Table getTable(TokenizerMode mode) {
-        log.write("Чтение таблицы мода " + mode);
+        log.write(Locale.getInstance("sys").get("log_wordgen_getTable").replace("{mode}", mode.toString()));
         if (!tables.containsKey(mode.name())) {
             try {
                 addTable(mode);
             } catch (OutOfMemoryError e) {
-                log.write("Очистка списка таблиц");
+                log.write(Locale.getInstance("sys").get("log_wordgen_clearingTables"));
                 tables.clear();
                 System.gc();
                 addTable(mode);
@@ -64,7 +66,7 @@ public class WordGenerator {
     }
 
     public static String makeWord(TokenizerMode mode) {
-        log.write("Создание слова мода " + mode);
+        log.write(Locale.getInstance("sys").get("log_wordgen_makeWord").replace("{mode}", mode.toString()));
         if (!wordsQueueMap.containsKey(mode)) {
             wordsQueueMap.put(mode, new LinkedList<>());
         }
@@ -104,14 +106,16 @@ public class WordGenerator {
             }
         }
         if (wordsQueueMap.get(mode).isEmpty()) {
-            throw new ManyAttemptsFailedException("Не получилось создать слово :(");
+            throw new ManyAttemptsFailedException(Locale.getInstance("sys").get("exc_wordgen_failed"));
         } else {
             return wordsQueueMap.get(mode).pollFirst();
         }
     }
 
     public static String makeWord(String startWord, TokenizerMode mode) {
-        log.write("Создание определения слова " + startWord + " мода " + mode);
+        log.write(Locale.getInstance("sys").get("log_wordgen_makeDef")
+                .replace("{mode}", mode.toString())
+                .replace("{word}", startWord));
         if (!wordsQueueMap.containsKey(mode)) {
             wordsQueueMap.put(mode, new LinkedList<>());
         }
@@ -149,7 +153,7 @@ public class WordGenerator {
             }
             attempt++;
         }
-        throw new ManyAttemptsFailedException("Не получилось создать слово :(");
+        throw new ManyAttemptsFailedException(Locale.getInstance("sys").get("exc_wordgen_failed"));
     }
 
     private static boolean isUpper(char c) {

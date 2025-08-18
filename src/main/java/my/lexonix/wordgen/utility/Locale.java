@@ -15,11 +15,11 @@ public class Locale {
 
     // Приватный конструктор
     private Locale(String localeName) {
-        log.write("Создание локаля " + localeName);
+        log.write("Чтение локаля " + localeName); // НЕЛЬЗЯ СТАВИТЬ В ЛОКАЛЬ: РЕКУРСИЯ
         this.localeName = localeName;
 
         this.localeMap = new HashMap<>();
-        JSONObject j = Utility.getJSONObject("data/" + localeName + ".json");
+        JSONObject j = Utility.getJSONObject("data/locale/" + localeName + ".json");
         for (String key : j.keySet()) {
             localeMap.put(key, j.getString(key));
         }

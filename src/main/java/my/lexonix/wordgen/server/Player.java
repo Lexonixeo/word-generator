@@ -2,6 +2,7 @@ package my.lexonix.wordgen.server;
 
 import my.lexonix.wordgen.library.NoWordException;
 import my.lexonix.wordgen.library.WordLibrary;
+import my.lexonix.wordgen.utility.Locale;
 import my.lexonix.wordgen.utility.Logger;
 import my.lexonix.wordgen.utility.NoJSONFileException;
 import my.lexonix.wordgen.utility.Utility;
@@ -24,6 +25,7 @@ public class Player {
     private long lastIncomeUpdate;
     private long lastIncome;
     private final String name;
+    private String localeName;
 
     public Player(PlatformMode mode, String accountID, String passHash, String name) {
         String playerID = switch(mode) {
@@ -40,6 +42,7 @@ public class Player {
         this.income = 0;
         this.lastIncome = 0;
         this.lastIncomeUpdate = System.currentTimeMillis();
+        this.localeName = "ru_RU";
     }
 
     public Player(String playerID, String passHash) {
@@ -47,11 +50,11 @@ public class Player {
         try {
             json = Utility.getJSONObject("data/server/players/" + playerID + ".json");
         } catch (NoJSONFileException e) {
-            throw new AuthorizationException("Ошибка авторизации");
+            throw new AuthorizationException(Locale.getInstance("sys").get("exc_player_not_exists"));
         }
         if (!json.getString("h").equals(passHash) // passHash
                 || !json.getString("p").equals(playerID)) { // playerID
-            throw new AuthorizationException("Ошибка авторизации");
+            throw new AuthorizationException(Locale.getInstance("sys").get("exc_player_wrong_password"));
         }
         this.playerID = playerID;
         this.passHash = passHash;
@@ -60,6 +63,7 @@ public class Player {
         this.lastIncomeUpdate = json.getLong("u"); // lastIncomeUpdate
         this.income = 0;
         this.lastIncome = json.getLong("l"); // lastIncome
+        this.localeName = json.getString("o"); // localeName
 
         JSONArray ja = json.getJSONArray("w"); // words
         this.words = new ArrayList<>();
@@ -97,7 +101,7 @@ public class Player {
 
     public void save() {
         checkIncome();
-        log.write("Сохранение игрока " + playerID);
+        log.write(Locale.getInstance("sys").get("log_player_save").replace("{playerID}", playerID));
         JSONObject json = new JSONObject();
         json.put("p", playerID); // playerID
         json.put("h", passHash); // passHash
@@ -111,6 +115,7 @@ public class Player {
         json.put("w", ja); // words
         json.put("u", lastIncomeUpdate); // lastIncomeUpdate
         json.put("l", lastIncome); // lastIncome
+        json.put("o", localeName); // localeName
         Utility.saveJSONObject("data/server/players/" + playerID + ".json", json, 4);
     }
 
@@ -119,14 +124,20 @@ public class Player {
     }
 
     public void addIncome(long delta) {
-        log.write("Обновление прибыли игрока " + playerID + " на " + delta);
+        log.write(Locale.getInstance("sys").get("log_player_addIncome")
+                .replace("{playerID}", playerID)
+                .replace("{income}", String.valueOf(income))
+        );
         this.income += delta;
     }
 
     public void addBalance(long delta) {
-        log.write("Обновление баланса игрока " + playerID + " на " + delta);
+        log.write(Locale.getInstance("sys").get("log_player_addBalance")
+                .replace("{playerID}", playerID)
+                .replace("{balance}", String.valueOf(balance))
+        );
         if (this.balance + delta < 0) {
-            throw new NotEnoughMoneyException("Недостаточно средств!");
+            throw new NotEnoughMoneyException(Locale.getInstance("sys").get("exc_player_not_enough_money"));
         }
         this.balance += delta;
     }
@@ -154,5 +165,9 @@ public class Player {
     public List<String> getWords(int page) {
         return words.subList(Math.min(Math.max(page * 10, 0), words.size()),
                 Math.max(Math.min((page + 1) * 10, words.size()), 0));
+    }
+
+    public String getLocale() {
+        return localeName;
     }
 }

@@ -22,7 +22,7 @@ public class Utility {
     }
 
     public static void saveFile(String path, ArrayList<String> arr) {
-        log.write("Сохранение ArrayList<String> " + path);
+        log.write(Locale.getInstance("sys").get("log_utility_saveFile").replace("{path}", path));
         try {
             FileWriter writer = new FileWriter(path);
             for(String str: arr) {
@@ -44,7 +44,7 @@ public class Utility {
     }
 
     public static ArrayList<String> readFile(String path) {
-        log.write("Чтение файла в ArrayList<String> " + path);
+        log.write(Locale.getInstance("sys").get("log_utility_readFile").replace("{path}", path));
         ArrayList<String> arr = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String sCurrentLine;
@@ -67,7 +67,8 @@ public class Utility {
     }
 
     public static JSONObject getJSONObject(String path) {
-        log.write("Взятие JSONObject " + path);
+        // DO NOT CHANGE
+        log.write("Чтение JSONObject " + path);
         JSONObject ans;
         File file = new File(path);
         try {
@@ -82,7 +83,7 @@ public class Utility {
     }
 
     public static JSONArray getJSONArray(String path) {
-        log.write("Взятие JSONArray " + path);
+        log.write(Locale.getInstance("sys").get("log_utility_readJSONArray").replace("{path}", path));
         JSONArray ans;
         File file = new File(path);
         try {
@@ -97,7 +98,7 @@ public class Utility {
     }
 
     public static void saveJSONObject(String path, JSONObject jo, int indent) {
-        log.write("Сохранение JSONObject " + path);
+        log.write(Locale.getInstance("sys").get("log_utility_saveJSONObject").replace("{path}", path));
         try (FileWriter file = new FileWriter(path)) {
             file.write(jo.toString(indent));
             file.flush();
@@ -107,7 +108,7 @@ public class Utility {
     }
 
     public static void saveJSONArray(String path, JSONArray jo) {
-        log.write("Сохранение JSONArray " + path);
+        log.write(Locale.getInstance("sys").get("log_utility_saveJSONArray").replace("{path}", path));
         try (FileWriter file = new FileWriter(path)) {
             file.write(jo.toString(4));
             file.flush();

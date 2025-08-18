@@ -65,7 +65,7 @@ public class DiscordBot extends JDABuilder {
                         .addOption(OptionType.STRING, "word", "Само слово", false)
                         .addOption(OptionType.INTEGER, "mode", "Режим создания слова (1-4)", false),
                 Commands.slash("stop", "Остановить сервер"),
-                Commands.slash("help", "Узнать список команд"),
+                // Commands.slash("help", "Узнать список команд"),
                 Commands.slash("menu", "Открыть меню")
         ).queue();
     }

@@ -9,23 +9,23 @@ public abstract class UpdateThreadie {
         thread = new Thread(() -> {
             boolean closed = false;
             while (!Thread.interrupted()) {
-                log.write("Выполнение действий");
+                log.write(Locale.getInstance("sys").get("log_updatethread_run"));
                 update();
                 try {
                     Thread.sleep(sleepTime);
                 } catch (InterruptedException e) {
-                    log.write("Прерывание 1");
+                    log.write(Locale.getInstance("sys").get("log_updatethread_interrupt1"));
                     onClose();
                     closed = true;
-                    log.write("Выключен");
+                    log.write(Locale.getInstance("sys").get("log_updatethread_closed"));
                     break;
                 }
             }
             if (!closed) {
-                log.write("Прерывание 2");
+                log.write(Locale.getInstance("sys").get("log_updatethread_interrupt2"));
                 onClose();
                 // closed = true;
-                log.write("Выключен");
+                log.write(Locale.getInstance("sys").get("log_updatethread_closed"));
             }
         });
         thread.setName(name);

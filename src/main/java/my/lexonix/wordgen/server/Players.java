@@ -1,5 +1,6 @@
 package my.lexonix.wordgen.server;
 
+import my.lexonix.wordgen.utility.Locale;
 import my.lexonix.wordgen.utility.Logger;
 import my.lexonix.wordgen.utility.NoJSONFileException;
 import my.lexonix.wordgen.utility.Utility;
@@ -18,7 +19,7 @@ public class Players {
     private static final Logger log = new Logger("Players");
 
     public static void savePlayers() {
-        log.write("Сохранение активных игроков");
+        log.write(Locale.getInstance("sys").get("log_players_savePlayers"));
         for (Player p : activePlayers) {
             players.put(p.getPlayerID(), p.getName());
             // p.checkDebt();
@@ -96,7 +97,9 @@ public class Players {
      */
 
     public static Player makeNewPlayer(PlatformMode mode, String accountID, String passHash, String name) {
-        log.write("Создание игрока " + mode + " " + accountID);
+        log.write(Locale.getInstance("sys").get("log_players_makeNewPlayer")
+                .replace("{mode}", mode.toString())
+                .replace("{accountID}", accountID));
         Player p = new Player(mode, accountID, passHash, name);
         if (Utility.isFileExists("data/server/players/" + p.getPlayerID() + ".json")) {
             throw new AuthorizationException("Пользователь уже существует!");
@@ -114,13 +117,14 @@ public class Players {
         };
         playerID += accountID;
 
-        log.write("Получение игрока " + playerID);
+        log.write(Locale.getInstance("sys").get("log_players_getPlayer")
+                .replace("{playerID}", playerID));
         for (Player p : activePlayers) {
             if (p.getPlayerID().equals(playerID)) {
                 if (p.checkPassHash(passHash)) {
                     return p;
                 } else {
-                    throw new AuthorizationException("Ошибка авторизации 5380532");
+                    throw new AuthorizationException(Locale.getInstance("sys").get("exc_player_wrong_password"));
                 }
             }
         }

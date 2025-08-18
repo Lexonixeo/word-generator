@@ -2,6 +2,7 @@ package my.lexonix.wordgen.server;
 
 import my.lexonix.wordgen.gateway.discord.DiscordBot;
 import my.lexonix.wordgen.library.WordLibrary;
+import my.lexonix.wordgen.utility.Locale;
 import my.lexonix.wordgen.utility.UpdateThreadie;
 
 import java.io.File;
@@ -14,7 +15,8 @@ public class Server {
     static {
         bot = new DiscordBot();
 
-        SERVER_AUTO_UPDATE = new UpdateThreadie(SAU_TIME, "SERVER AUTO UPDATE", true) {
+        SERVER_AUTO_UPDATE = new UpdateThreadie(SAU_TIME,
+                Locale.getInstance("sys").get("log_sau_thread"), true) {
             @Override
             public void update() {
                 Players.savePlayers();

@@ -2,6 +2,7 @@ package my.lexonix.wordgen.library;
 
 import my.lexonix.wordgen.generator.WordGenerator;
 import my.lexonix.wordgen.server.Player;
+import my.lexonix.wordgen.utility.Locale;
 import my.lexonix.wordgen.utility.Logger;
 import my.lexonix.wordgen.tokens.Token;
 import my.lexonix.wordgen.tokens.Tokenizer;
@@ -49,7 +50,7 @@ public class WordLibrary {
     }
 
     public static void save() {
-        log.write("Сохранение библиотеки слов");
+        log.write(Locale.getInstance("sys").get("log_wordlibrary_save"));
         save("data/server/library/wgdg.json", WGDG);
         save("data/server/library/whdg.json", WHDG);
         save("data/server/library/wgdh.json", WGDH);
@@ -120,7 +121,7 @@ public class WordLibrary {
     }
 
     public static void load() {
-        log.write("Загрузка библиотеки слов");
+        log.write(Locale.getInstance("sys").get("log_wordlibrary_save"));
         load("data/server/library/wgdg.json", WGDG, LibraryMode.WordGen_DefGen);
         load("data/server/library/whdg.json", WHDG, LibraryMode.WordHum_DefGen);
         load("data/server/library/wgdh.json", WGDH, LibraryMode.WordGen_DefHum);
@@ -130,10 +131,10 @@ public class WordLibrary {
     }
 
     private static void addWord(String word, String def, LibraryMode mode, String playerID) {
-        log.write("Добавление в библиотеку слова " + word);
+        log.write(Locale.getInstance("sys").get("log_wordlibrary_addWord").replace("{word}", word));
         String newWord = prepareWord(word);
         if (WORD_MODES.containsKey(newWord)) {
-            throw new WordExistsException("Слово уже существует!");
+            throw new WordExistsException(Locale.getInstance("sys").get("exc_word_exists"));
         }
         (switch (mode) {
             case WordGen_DefGen -> WGDG;
@@ -156,7 +157,8 @@ public class WordLibrary {
     public static Word getWord(String wor) {
         String word = prepareWord(wor);
         if (!WORD_MODES.containsKey(word)) {
-            throw new NoWordException("Не существует слова " + word);
+            throw new NoWordException(Locale.getInstance("sys").get("exc_word_not_exists")
+                    .replace("{word}", word));
         }
         LibraryMode mode = WORD_MODES.get(word);
         return (switch (mode) {
@@ -199,19 +201,19 @@ public class WordLibrary {
     }
 
     public static void reportWord(String wor) {
-        log.write("Жалоба на слово " + wor);
+        log.write(Locale.getInstance("sys").get("log_wordlibrary_report").replace("{word}", wor));
         String word = prepareWord(wor);
         REPORTED_WORDS.add(word);
     }
 
     public static void removeReport(String wor) {
-        log.write("Убрана жалоба на слово " + wor);
+        log.write(Locale.getInstance("sys").get("log_wordlibrary_remove").replace("{word}", wor));
         String word = prepareWord(wor);
         REPORTED_WORDS.remove(word);
     }
 
     public static void blockWord(String wor) {
-        log.write("Блокировка слова " + wor);
+        log.write(Locale.getInstance("sys").get("log_wordlibrary_block").replace("{word}", wor));
         String word = prepareWord(wor);
         BLOCKED_WORDS.add(word);
         WORD_OWNERS.remove(word);
@@ -226,7 +228,7 @@ public class WordLibrary {
     }
 
     public static void removeWord(String wor) {
-        log.write("Удаление слова " + wor);
+        log.write(Locale.getInstance("sys").get("log_wordlibrary_delete").replace("{word}", wor));
         String word = prepareWord(wor);
         WORD_OWNERS.remove(word);
         (switch (WORD_MODES.get(word)) {

@@ -1,5 +1,6 @@
 package my.lexonix.wordgen.tokens;
 
+import my.lexonix.wordgen.utility.Locale;
 import my.lexonix.wordgen.utility.Logger;
 
 import java.security.SecureRandom;
@@ -21,7 +22,7 @@ public class Tokenizer {
     }
 
     public static ArrayList<Token> tokenize(String s, TokenizerMode mode) {
-        log.write("Токенизация по моду " + mode);
+        log.write(Locale.getInstance("sys").get("log_tokenizer_tokenize").replace("{mode}", mode.toString()));
         return switch (mode) {
             case WORDS -> getWords(s);
             case LETTERS -> getLetters(s);
