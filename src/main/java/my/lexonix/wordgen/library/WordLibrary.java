@@ -19,8 +19,6 @@ import static my.lexonix.wordgen.tokens.TokenizerMode.TRIPLE;
 import static my.lexonix.wordgen.tokens.TokenizerMode.WORDS;
 
 public class WordLibrary {
-    private final static long SIN_PERIOD = 1000 * 60 * 5 + 1000; // 5 минут 1 с
-
     private static final HashMap<String, Word> WGDG = new HashMap<>(); // Word-Generated Definition-Generated
     private static final HashMap<String, Word> WHDG = new HashMap<>();
     private static final HashMap<String, Word> WGDH = new HashMap<>();
@@ -30,6 +28,7 @@ public class WordLibrary {
     private static final HashMap<String, String> WORD_OWNERS = new HashMap<>(); // K: Word V: PlayerID
     private static final ArrayList<String> BLOCKED_WORDS = new ArrayList<>();
     private static final ArrayList<String> REPORTED_WORDS = new ArrayList<>();
+    private static final Logger log = new Logger("WordLibrary");
 
     private static void save(String path, HashMap<String, Word> map) {
         JSONArray ja = new JSONArray();
@@ -43,13 +42,14 @@ public class WordLibrary {
             jo.put("i", map.get(word).getIncome()); // income
             jo.put("p", map.get(word).getPrice()); // price
             jo.put("u", map.get(word).getLastUpdate()); // lastUpdate
+            jo.put("c", map.get(word).isConst()); // isConst
             ja.put(jo);
         }
         Utility.saveJSONArray(path, ja);
     }
 
     public static void save() {
-        Logger.write("[WordLibrary] Сохранение библиотеки слов");
+        log.write("Сохранение библиотеки слов");
         save("data/server/library/wgdg.json", WGDG);
         save("data/server/library/whdg.json", WHDG);
         save("data/server/library/wgdh.json", WGDH);
@@ -69,7 +69,8 @@ public class WordLibrary {
                 long income = jo.getLong("i"); // income
                 long price = jo.getLong("p"); // price
                 long lastUpdate = jo.getLong("u"); // lastUpdate
-                map.put(word, new Word(word, definition, ownerID, income, price, lastUpdate));
+                boolean isConst = jo.getBoolean("c"); // isConst
+                map.put(word, new Word(word, definition, ownerID, income, price, lastUpdate, isConst));
                 assert !WORD_MODES.containsKey(word) : 459327423;
                 WORD_MODES.put(word, mode);
                 WORD_OWNERS.put(word, ownerID);
@@ -119,7 +120,7 @@ public class WordLibrary {
     }
 
     public static void load() {
-        Logger.write("[WordLibrary] Загрузка библиотеки слов");
+        log.write("Загрузка библиотеки слов");
         load("data/server/library/wgdg.json", WGDG, LibraryMode.WordGen_DefGen);
         load("data/server/library/whdg.json", WHDG, LibraryMode.WordHum_DefGen);
         load("data/server/library/wgdh.json", WGDH, LibraryMode.WordGen_DefHum);
@@ -129,7 +130,7 @@ public class WordLibrary {
     }
 
     private static void addWord(String word, String def, LibraryMode mode, String playerID) {
-        Logger.write("[WordLibrary] Добавление в библиотеку слова " + word);
+        log.write("Добавление в библиотеку слова " + word);
         String newWord = prepareWord(word);
         if (WORD_MODES.containsKey(newWord)) {
             throw new WordExistsException("Слово уже существует!");
@@ -198,19 +199,19 @@ public class WordLibrary {
     }
 
     public static void reportWord(String wor) {
-        Logger.write("[WordLibrary] Жалоба на слово " + wor);
+        log.write("Жалоба на слово " + wor);
         String word = prepareWord(wor);
         REPORTED_WORDS.add(word);
     }
 
     public static void removeReport(String wor) {
-        Logger.write("[WordLibrary] Убрана жалоба на слово " + wor);
+        log.write("Убрана жалоба на слово " + wor);
         String word = prepareWord(wor);
         REPORTED_WORDS.remove(word);
     }
 
     public static void blockWord(String wor) {
-        Logger.write("[WordLibrary] Блокировка слова " + wor);
+        log.write("Блокировка слова " + wor);
         String word = prepareWord(wor);
         BLOCKED_WORDS.add(word);
         WORD_OWNERS.remove(word);
@@ -225,7 +226,7 @@ public class WordLibrary {
     }
 
     public static void removeWord(String wor) {
-        Logger.write("[WordLibrary] Удаление слова " + wor);
+        log.write("Удаление слова " + wor);
         String word = prepareWord(wor);
         WORD_OWNERS.remove(word);
         (switch (WORD_MODES.get(word)) {
@@ -236,40 +237,6 @@ public class WordLibrary {
         }).remove(word);
         WORD_MODES.remove(word);
         WORDS.remove(word);
-    }
-
-    public static long getCost(TokenizerMode mode, String word, String definition, Player p) {
-        long cost;
-
-        if (word != null && definition != null) {
-            mode = TRIPLE;
-            cost = 3;
-        } else if (word != null) {
-            cost = 8;
-        } else if (definition != null) {
-            cost = 6;
-        } else {
-            cost = 5;
-        }
-
-        cost = (long) (cost * (p.getWordsCount() + 10) / 10.0);
-        cost = (long) (cost * (p.getBalance() + 100) / 100.0);
-
-        if (word == null || definition == null) {
-            switch (mode) {
-                case QUADRUPLE -> cost *= 2;
-                case RANDOM -> cost *= 4;
-            }
-        }
-
-        cost = (long) (cost * (1 + 0.5 * Math.sin(System.currentTimeMillis() * 2 * Math.PI / SIN_PERIOD)));
-
-        return cost;
-    }
-
-    public static long getChangeDefCost(String word) {
-        Word w = WordLibrary.getWord(word);
-        return 100;
     }
 
     public static ArrayList<String> makeFourWordSentences(TokenizerMode mode, String word, String definition) {
@@ -295,7 +262,7 @@ public class WordLibrary {
                 wordSentence = wordd + " " + definition;
             }
             String wordie = WordLibrary.getWordie(wordSentence);
-            if (!WordLibrary.isWordExists(wordie) && !WordLibrary.isWordBlocked(wordie)) {
+            if (!WordLibrary.isWordExists(wordie) && !WordLibrary.isWordBlocked(wordie) && wordie.length() <= 50) {
                 ans.add(wordSentence);
             }
         }

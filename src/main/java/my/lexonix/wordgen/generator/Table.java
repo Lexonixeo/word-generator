@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Table {
+    private static final Logger log = new Logger("Table");
+
     private final HashMap<Token, HashMap<Token, Integer>> table;
     private final HashMap<Token, RandomCollection<Token>> tableRC;
     private final String path;
@@ -24,7 +26,7 @@ public class Table {
     private final boolean isReadOnly;
 
     public Table(String path, boolean isReadOnly) {
-        Logger.write("[Table] Получение таблички " + path);
+        log.write("Получение таблички " + path);
         this.isReadOnly = isReadOnly;
         table = new HashMap<>();
         tableRC = new HashMap<>();
@@ -38,7 +40,7 @@ public class Table {
     }
 
     public Table(String path, TokenizerMode mode) {
-        Logger.write("[Table] Новая табличка! " + path + " : " + mode);
+        log.write("Новая табличка! " + path + " : " + mode);
         table = new HashMap<>();
         tableRC = new HashMap<>();
         randomCollection = new RandomCollection<>(random);
@@ -57,6 +59,7 @@ public class Table {
 
     public Token getRandomToken(Token before) {
         if (!table.containsKey(before) && !tableRC.containsKey(before)) {
+            // может быть просто взять случайный токен невзирая на before? TODO
             throw new NoTokenException("В текущей модели отсутствует продолжение для токена " + before);
         }
 
@@ -72,7 +75,7 @@ public class Table {
     }
 
     public void updateTable(String textPath) {
-        Logger.write("[Table] Обновление таблички текстом " + textPath);
+        log.write("Обновление таблички текстом " + textPath);
         int k = switch(mode) {
             case WORDS, LETTERS -> 1;
             case DOUBLE -> 2;
@@ -92,7 +95,7 @@ public class Table {
 
     public void saveTableJSON() {
         assert !isReadOnly : 527014032;
-        Logger.write("[Table] Сохранение в JSON таблицы " + path);
+        log.write("Сохранение в JSON таблицы " + path);
         JSONObject j = new JSONObject();
         j.put("m", mode.name()); // mode
         JSONArray firstTokens = new JSONArray();
@@ -117,10 +120,11 @@ public class Table {
         Utility.saveJSONObject(path, j, indent);
     }
 
+    /*
     @Deprecated
     public void saveTable() {
         assert !isReadOnly : 495324325;
-        Logger.write("[Table] Сохранение в TXT таблицы " + path);
+        log.write("Сохранение в TXT таблицы " + path);
 
         ArrayList<String> strings = new ArrayList<>();
         strings.add(mode.name());
@@ -143,6 +147,8 @@ public class Table {
         Utility.saveFile(path, strings);
     }
 
+     */
+
     private void addPair(Token before, Token token) {
         assert !isReadOnly : 486549203;
         if (!table.containsKey(before)) {
@@ -155,9 +161,10 @@ public class Table {
         randomCollection.add(1, token);
     }
 
+    /*
     @Deprecated
     private static Pair<HashMap<Token, HashMap<Token, Integer>>, TokenizerMode> readTable(String path) {
-        Logger.write("[Table] Чтение TXT таблицы " + path);
+        log.write("Чтение TXT таблицы " + path);
         HashMap<Token, HashMap<Token, Integer>> table = new HashMap<>();
         ArrayList<String> strings = Utility.readFile(path);
         TokenizerMode mode = TokenizerMode.valueOf(strings.getFirst());
@@ -174,8 +181,10 @@ public class Table {
         return new Pair<>(table, mode);
     }
 
+     */
+
     private TokenizerMode readTableJSON(String path) {
-        Logger.write("[Table] Чтение JSON таблицы " + path);
+        log.write("Чтение JSON таблицы " + path);
 
         JSONObject js = Utility.getJSONObject(path);
         TokenizerMode mode = TokenizerMode.valueOf(js.getString("m"));
@@ -199,7 +208,7 @@ public class Table {
     }
 
     private TokenizerMode readRCTableJSON(String path) {
-        Logger.write("[Table] Чтение JSON таблицы (RC) " + path);
+        log.write("Чтение JSON таблицы (RC) " + path);
 
         JSONObject js = Utility.getJSONObject(path);
         TokenizerMode mode = TokenizerMode.valueOf(js.getString("m"));

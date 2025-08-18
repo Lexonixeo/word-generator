@@ -15,9 +15,10 @@ public class Players {
     // private static final HashMap<String, Long> playerDebts = new HashMap<>(); // долги для выдачи игрокам
     private static final ArrayList<String> moderatorsID = new ArrayList<>();
     private static final HashMap<String, String> players = new HashMap<>(); // playerId, name;
+    private static final Logger log = new Logger("Players");
 
     public static void savePlayers() {
-        Logger.write("[Players] Сохранение активных игроков");
+        log.write("Сохранение активных игроков");
         for (Player p : activePlayers) {
             players.put(p.getPlayerID(), p.getName());
             // p.checkDebt();
@@ -95,7 +96,7 @@ public class Players {
      */
 
     public static Player makeNewPlayer(PlatformMode mode, String accountID, String passHash, String name) {
-        Logger.write("[Players] Создание игрока " + mode + " " + accountID);
+        log.write("Создание игрока " + mode + " " + accountID);
         Player p = new Player(mode, accountID, passHash, name);
         if (Utility.isFileExists("data/server/players/" + p.getPlayerID() + ".json")) {
             throw new AuthorizationException("Пользователь уже существует!");
@@ -113,7 +114,7 @@ public class Players {
         };
         playerID += accountID;
 
-        Logger.write("[Players] Получение игрока " + playerID);
+        log.write("Получение игрока " + playerID);
         for (Player p : activePlayers) {
             if (p.getPlayerID().equals(playerID)) {
                 if (p.checkPassHash(passHash)) {

@@ -4,14 +4,12 @@ import my.lexonix.wordgen.server.Player;
 import my.lexonix.wordgen.server.Players;
 import my.lexonix.wordgen.server.Server;
 import my.lexonix.wordgen.utility.Logger;
-import my.lexonix.wordgen.utility.Utility;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +17,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class MainListener extends ListenerAdapter {
+    private static final Logger log = new Logger("MainListener");
+
     private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(4);
 
     @Override
@@ -27,7 +27,7 @@ public class MainListener extends ListenerAdapter {
 
         String message = event.getMessage().getContentRaw();
         if (message.startsWith("!!")) {
-            Logger.write("[CommandsListener] " + event.getAuthor().getName() + " написал " + message);
+            log.write(event.getAuthor().getName() + " написал " + message);
         }
 
         /*
@@ -39,7 +39,7 @@ public class MainListener extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        Logger.write("[CommandsListener] Использована команда " + event.getName());
+        log.write("Использована команда " + event.getName());
         Player p = DiscordBot.getPlayer(event.getUser());
         switch (event.getName()) {
             case "menu": // случайное слово, слово дня, профиль и т.д, + профиль модератора // TODO
@@ -60,6 +60,7 @@ public class MainListener extends ListenerAdapter {
         String[] buttonId = event.getComponentId().split("_");
         Player p = DiscordBot.getPlayer(event.getUser());
         if (buttonId[0].equals(p.getPlayerID())) {
+            log.write("Пользователем " + p.getPlayerID() + " использована кнопка " + event.getComponentId());
             switch (buttonId[1]) {
                 case "profile": {
                     if (buttonId.length == 2) {
@@ -106,7 +107,7 @@ public class MainListener extends ListenerAdapter {
                 Что вы хотите сделать?
                 """;
         event.getHook().editOriginal(messageBuilder).setActionRow(
-                Button.primary(player.getPlayerID() + "_profile", "Профиль"),
+                Button.primary(player.getPlayerID() + "_profile", "Открыть профиль"),
                 Button.primary(player.getPlayerID() + "_wordread", "Найти случайное слово"),
                 Button.primary(player.getPlayerID() + "_wordgen", "Придумать случайное слово"),
                 Button.danger(player.getPlayerID() + "_stop", "Остановить сервер")
@@ -150,10 +151,14 @@ public class MainListener extends ListenerAdapter {
         int i = 0;
         for (String word : words) {
             sb.append(word).append("\n");
+            String wordie = words.get(i).substring(0, Math.min(77, words.get(i).length()));
+            if (words.get(i).length() > 77) {
+                wordie += "...";
+            }
             if (i < 5) {
-                firstRow.add(Button.primary(p.getPlayerID() + "_wordread_" + words.get(i), words.get(i)));
+                firstRow.add(Button.primary(p.getPlayerID() + "_wordread_" + words.get(i), wordie));
             } else {
-                secondRow.add(Button.primary(p.getPlayerID() + "_wordread_" + words.get(i), words.get(i)));
+                secondRow.add(Button.primary(p.getPlayerID() + "_wordread_" + words.get(i), wordie));
             }
             i++;
         }

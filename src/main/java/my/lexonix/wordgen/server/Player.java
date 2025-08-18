@@ -14,6 +14,7 @@ import java.util.List;
 
 public class Player {
     private static final long ONE_HOUR = 1000 * 60 * 60;
+    private static final Logger log = new Logger("Player");
 
     private final String playerID;
     private final String passHash;
@@ -96,7 +97,7 @@ public class Player {
 
     public void save() {
         checkIncome();
-        Logger.write("[Player] Сохранение игрока " + playerID);
+        log.write("Сохранение игрока " + playerID);
         JSONObject json = new JSONObject();
         json.put("p", playerID); // playerID
         json.put("h", passHash); // passHash
@@ -118,12 +119,12 @@ public class Player {
     }
 
     public void addIncome(long delta) {
-        Logger.write("[Player] Обновление прибыли игрока " + playerID + " на " + delta);
+        log.write("Обновление прибыли игрока " + playerID + " на " + delta);
         this.income += delta;
     }
 
     public void addBalance(long delta) {
-        Logger.write("[Player] Обновление баланса игрока " + playerID + " на " + delta);
+        log.write("Обновление баланса игрока " + playerID + " на " + delta);
         if (this.balance + delta < 0) {
             throw new NotEnoughMoneyException("Недостаточно средств!");
         }

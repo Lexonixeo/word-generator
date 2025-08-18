@@ -7,9 +7,10 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class BattleListener extends ListenerAdapter {
+    private static final Logger log = new Logger("BattleListener");
+
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        Logger.write("[WordsListener] Использована слэш-команда " + event.getName());
         Player p = DiscordBot.getPlayer(event.getUser());
         switch (event.getName()) {
 
@@ -21,8 +22,6 @@ public class BattleListener extends ListenerAdapter {
         String[] buttonId = event.getComponentId().split("_");
         Player p = DiscordBot.getPlayer(event.getUser());
         if (buttonId[0].equals(p.getPlayerID())) {
-            Logger.write("[WordsListener] Пользователем " + p.getPlayerID() +
-                    " использована кнопка " + event.getComponentId());
             switch (buttonId[1]) {
                 case "battlesend": {
                     String word = buttonId[2];

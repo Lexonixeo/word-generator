@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import static my.lexonix.wordgen.tokens.TokenizerMode.*;
 
 public class SentenceGenerator {
+    private static final Logger log = new Logger("SentenceGenerator");
+
     public static void main() {
         Table table = new Table("data/tables/orfoep4.json", QUADRUPLE);
         //table.updateTable("data/texts/geom.txt");
@@ -41,7 +43,7 @@ public class SentenceGenerator {
     }
 
     public static String makeSentence(Table table, int tokensLength, Token firstToken, boolean showFirstToken) {
-        Logger.write("[SentenceGenerator] Создание предложения в " + tokensLength + " токенов и мода " + table.getMode());
+        log.write("Создание предложения в " + tokensLength + " токенов и мода " + table.getMode());
         StringBuilder sb = new StringBuilder();
 
         Token nextToken = firstToken;

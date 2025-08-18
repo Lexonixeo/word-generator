@@ -18,6 +18,7 @@ public class WordGenerator {
     private final static HashMap<TokenizerMode, LinkedList<String>> wordsQueueMap = new HashMap<>();
     private final static int TOKEN_LENGTH = 1000;
     private final static HashMap<TokenizerMode, Object> synchMap = new HashMap<>();
+    private static final Logger log = new Logger("WordGenerator");
 
     static {
         synchMap.put(LETTERS, 1);
@@ -31,13 +32,7 @@ public class WordGenerator {
     public static void main() {
         ArrayList<String> a = new ArrayList<>();
 
-        a.add(WordGenerator.makeWord("ЯЗЫНОГВА", TRIPLE));
-        for (int i = 0; i < 100; i++) {
-            a.add(WordGenerator.makeWord(RANDOM));
-        }
-        for (int i = 0; i < 100; i++) {
-            a.add(WordGenerator.makeWord(QUADRUPLE));
-        }
+        a.add(WordGenerator.makeWord("Ы", LETTERS));
 
         Utility.saveFile("data/word.txt", a);
     }
@@ -54,12 +49,12 @@ public class WordGenerator {
     }
 
     private static Table getTable(TokenizerMode mode) {
-        Logger.write("[WordGenerator] Чтение таблицы мода " + mode);
+        log.write("Чтение таблицы мода " + mode);
         if (!tables.containsKey(mode.name())) {
             try {
                 addTable(mode);
             } catch (OutOfMemoryError e) {
-                Logger.write("[WordGenerator] Очистка списка таблиц");
+                log.write("Очистка списка таблиц");
                 tables.clear();
                 System.gc();
                 addTable(mode);
@@ -69,7 +64,7 @@ public class WordGenerator {
     }
 
     public static String makeWord(TokenizerMode mode) {
-        Logger.write("[WordGenerator] Создание слова мода " + mode);
+        log.write("Создание слова мода " + mode);
         if (!wordsQueueMap.containsKey(mode)) {
             wordsQueueMap.put(mode, new LinkedList<>());
         }
@@ -116,7 +111,7 @@ public class WordGenerator {
     }
 
     public static String makeWord(String startWord, TokenizerMode mode) {
-        Logger.write("[WordGenerator] Создание определения слова " + startWord + " мода " + mode);
+        log.write("Создание определения слова " + startWord + " мода " + mode);
         if (!wordsQueueMap.containsKey(mode)) {
             wordsQueueMap.put(mode, new LinkedList<>());
         }

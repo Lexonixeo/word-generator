@@ -10,6 +10,7 @@ public class Tokenizer {
     // public static final String WORDS_ALPHABET = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя";
     public static final String PUNCTUATION_ALPHABET = "'!\"#$%&\\'()*+,-./:;<=>?@[\\\\]^_`{|}~' 0123456789";
     private static final int BOUND = 35;
+    private static final Logger log = new Logger("Tokenizer");
 
     public static Token getLastToken(String s, TokenizerMode mode) {
         StringBuilder sr = new StringBuilder(s);
@@ -20,7 +21,7 @@ public class Tokenizer {
     }
 
     public static ArrayList<Token> tokenize(String s, TokenizerMode mode) {
-        Logger.write("[Tokenizer] Токенизация по моду " + mode);
+        log.write("Токенизация по моду " + mode);
         return switch (mode) {
             case WORDS -> getWords(s);
             case LETTERS -> getLetters(s);

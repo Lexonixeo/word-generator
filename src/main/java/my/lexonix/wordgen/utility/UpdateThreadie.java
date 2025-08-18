@@ -1,29 +1,31 @@
 package my.lexonix.wordgen.utility;
 
 public abstract class UpdateThreadie {
+    private final Logger log;
     private final Thread thread;
 
     public UpdateThreadie(long sleepTime, String name, boolean isDaemon) {
+        log = new Logger(name);
         thread = new Thread(() -> {
             boolean closed = false;
             while (!Thread.interrupted()) {
-                Logger.write("[" + Thread.currentThread().getName() + "] Выполнение действий");
+                log.write("Выполнение действий");
                 update();
                 try {
                     Thread.sleep(sleepTime);
                 } catch (InterruptedException e) {
-                    Logger.write("[" + Thread.currentThread().getName() + "] Прерывание 1");
+                    log.write("Прерывание 1");
                     onClose();
                     closed = true;
-                    Logger.write("[" + Thread.currentThread().getName() + "] Выключен");
+                    log.write("Выключен");
                     break;
                 }
             }
             if (!closed) {
-                Logger.write("[" + Thread.currentThread().getName() + "] Прерывание 2");
+                log.write("Прерывание 2");
                 onClose();
                 // closed = true;
-                Logger.write("[" + Thread.currentThread().getName() + "] Выключен");
+                log.write("Выключен");
             }
         });
         thread.setName(name);

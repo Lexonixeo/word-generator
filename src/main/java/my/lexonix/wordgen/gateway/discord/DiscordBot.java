@@ -17,6 +17,8 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.json.JSONObject;
 
 public class DiscordBot extends JDABuilder {
+    private static final Logger log = new Logger("DiscordBot");
+
     private JDA jda;
     private final MainListener ml = new MainListener();
     private final WordsListener wl = new WordsListener();
@@ -28,7 +30,7 @@ public class DiscordBot extends JDABuilder {
     }
 
     public DiscordBot() {
-        Logger.write("[DiscordBot] Создание бота");
+        log.write("Создание бота");
         JSONObject jo = Utility.getJSONObject("data/server/discord.json");
 
         super(jo.getString("token"), GatewayIntent.DEFAULT);
@@ -47,7 +49,7 @@ public class DiscordBot extends JDABuilder {
     }
 
     public void launch() {
-        Logger.write("[DiscordBot] Запуск бота");
+        log.write("Запуск бота");
         jda = build();
         try {
             jda.awaitReady(); // Важно!
@@ -69,7 +71,7 @@ public class DiscordBot extends JDABuilder {
     }
 
     public void stop() {
-        Logger.write("[DiscordBot] Остановка бота");
+        log.write("Остановка бота");
         Thread stopper = new DoingThreadie("Stopper", true) {
             @Override
             public void run() {
@@ -80,7 +82,7 @@ public class DiscordBot extends JDABuilder {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                Logger.write("[DiscordBot] Бот выключен.");
+                log.write("Бот выключен.");
             }
         }.getThread();
         stopper.start();

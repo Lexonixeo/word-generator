@@ -7,6 +7,7 @@ import java.util.Date;
 public class Logger {
     // мейби перейти на Logback? но нз
     private static final String pathname;
+    private final String className;
 
     static {
         new File("data").mkdirs();
@@ -18,10 +19,16 @@ public class Logger {
                         + ".txt";
     }
 
-    public static void write(String s) {
+    public Logger(String className) {
+        this.className = className;
+    }
+
+    public void write(String s) {
         String message = "["
                 + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
                 .format(new Date(System.currentTimeMillis()))
+                + " "
+                + className
                 + "]: "
                 + s
                 + "\n";
@@ -35,7 +42,7 @@ public class Logger {
         }
     }
 
-    public static void write(Exception e) {
+    public void write(Exception e) {
         PrintStream stream;
         try {
             stream = new PrintStream(new FileOutputStream(pathname, true));
@@ -45,6 +52,8 @@ public class Logger {
         String message = "["
                 + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
                 .format(new Date(System.currentTimeMillis()))
+                + " "
+                + className
                 + "]: ";
         stream.print(message);
         System.out.print(message);

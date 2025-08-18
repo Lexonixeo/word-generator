@@ -7,6 +7,7 @@ public class Word {
     private long income;
     private long price;
     private long lastUpdate;
+    private boolean isConst;
 
     public Word(String word, String definition, String ownerID) {
         this.word = word;
@@ -15,15 +16,17 @@ public class Word {
         this.income = 1;
         this.price = -1;
         this.lastUpdate = System.currentTimeMillis();
+        this.isConst = false;
     }
 
-    public Word(String word, String definition, String ownerID, long income, long price, long lastUpdate) {
+    public Word(String word, String definition, String ownerID, long income, long price, long lastUpdate, boolean isConst) {
         this.word = word;
         this.definition = definition;
         this.ownerID = ownerID;
         this.income = income;
         this.price = price;
         this.lastUpdate = lastUpdate;
+        this.isConst = isConst;
     }
 
     public String getWord() {
@@ -72,5 +75,13 @@ public class Word {
 
     public void setLastUpdate() {
         lastUpdate = System.currentTimeMillis();
+    }
+
+    public boolean isConst() {
+        return isConst;
+    }
+
+    public void setConst() {
+        this.isConst = true;
     }
 }

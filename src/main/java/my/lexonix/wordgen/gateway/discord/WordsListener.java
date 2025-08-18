@@ -1,9 +1,7 @@
 package my.lexonix.wordgen.gateway.discord;
 
-import my.lexonix.wordgen.library.LibraryMode;
-import my.lexonix.wordgen.library.NoWordException;
-import my.lexonix.wordgen.library.Word;
-import my.lexonix.wordgen.library.WordLibrary;
+import my.lexonix.wordgen.generator.NoTokenException;
+import my.lexonix.wordgen.library.*;
 import my.lexonix.wordgen.server.*;
 import my.lexonix.wordgen.tokens.TokenizerMode;
 import my.lexonix.wordgen.utility.Logger;
@@ -29,6 +27,7 @@ public class WordsListener extends ListenerAdapter {
     private final HashMap<Long, TempWordSentences> tempWordSentencesMap = new HashMap<>();
     private static final long TEMP_UPDATER = 1000 * 30; // 30 s
     private static final long MAX_TEMP_TIME = 1000 * 90; // 90 s
+    private static final Logger log = new Logger("WordsListener");
 
     private final Thread updater;
 
@@ -78,7 +77,6 @@ public class WordsListener extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        Logger.write("[WordsListener] Использована слэш-команда " + event.getName());
         Player p = DiscordBot.getPlayer(event.getUser());
         switch (event.getName()) {
             case "read":
@@ -103,8 +101,6 @@ public class WordsListener extends ListenerAdapter {
         String[] buttonId = event.getComponentId().split("_");
         Player p = DiscordBot.getPlayer(event.getUser());
         if (buttonId[0].equals(p.getPlayerID())) {
-            Logger.write("[WordsListener] Пользователем " + p.getPlayerID() +
-                    " использована кнопка " + event.getComponentId());
             switch (buttonId[1]) {
                 case "wordgen": {
                     generateWord(event, p);
@@ -194,12 +190,13 @@ public class WordsListener extends ListenerAdapter {
 
     private void checkWord(SlashCommandInteractionEvent event, Player p, Word w) {
         executor.execute(() -> {
+            String wordSentence = w.getSentence().substring(0, Math.min(w.getSentence().length(), 1500));
             String messageBuilder =
                     ":bust_in_silhouette: Имя владельца: " + Players.getName(w.getOwnerID()) + "\n" +
                             ":identification_card: ID владельца: " + w.getOwnerID() + "\n" +
                             ":moneybag: Стоимость: " + w.getPrice() + "@\n" +
                             ":chart_with_upwards_trend: Прибыль: " + w.getIncome() + "@/ч\n" +
-                            ":page_with_curl: Слово: " + w.getSentence();
+                            ":page_with_curl: Слово: " + wordSentence;
             List<ActionRow> rows = new ArrayList<>();
             if (p.getPlayerID().equals(w.getOwnerID())) {
                 rows.add(ActionRow.of(
@@ -228,12 +225,13 @@ public class WordsListener extends ListenerAdapter {
     private void checkWord(ButtonInteractionEvent event, Player p, Word w) {
         event.deferEdit().queue();
         executor.execute(() -> {
+            String wordSentence = w.getSentence().substring(0, Math.min(w.getSentence().length(), 1500));
             String messageBuilder =
                     ":bust_in_silhouette: Имя владельца: " + Players.getName(w.getOwnerID()) + "\n" +
-                    ":identification_card: ID владельца: " + w.getOwnerID() + "\n" +
-                    ":moneybag: Стоимость: " + w.getPrice() + "@\n" +
-                    ":chart_with_upwards_trend: Прибыль: " + w.getIncome() + "@/ч\n" +
-                    ":page_with_curl: Слово: " + w.getSentence();
+                            ":identification_card: ID владельца: " + w.getOwnerID() + "\n" +
+                            ":moneybag: Стоимость: " + w.getPrice() + "@\n" +
+                            ":chart_with_upwards_trend: Прибыль: " + w.getIncome() + "@/ч\n" +
+                            ":page_with_curl: Слово: " + wordSentence;
             List<ActionRow> rows = new ArrayList<>();
             if (p.getPlayerID().equals(w.getOwnerID())) {
                 rows.add(ActionRow.of(
@@ -263,10 +261,13 @@ public class WordsListener extends ListenerAdapter {
 
     private void generateWord(SlashCommandInteractionEvent event, Player p) {
         event.deferReply().queue(waitingMessage -> {
-            int mod = 0;
+            int mod = 3;
             try {
                 mod = event.getOption("mode").getAsInt();
             } catch (NullPointerException ignored) {}
+            if (mod < 1 || mod > 5) {
+                mod = 3;
+            }
             TokenizerMode mode = switch (mod) {
                 case 1 -> LETTERS;
                 case 2 -> DOUBLE;
@@ -282,8 +283,20 @@ public class WordsListener extends ListenerAdapter {
             } catch (NullPointerException ignored) {}
 
             if (word != null && (WordLibrary.isWordExists(word) || WordLibrary.isWordBlocked(word))) {
-                Logger.write("[WordsListener] Слово " + word + " уже существует/заблокировано.");
+                log.write("Слово " + word + " уже существует/заблокировано.");
                 waitingMessage.editOriginal(":x: Слово уже существует!").queue();
+                return;
+            } else if (word != null && word.length() < mod && mod != 5) {
+                log.write("Слово " + word + " слишком мало.");
+                waitingMessage.editOriginal(":x: Слово слишком мало для создания с таким режимом!").queue();
+                return;
+            } else if (word != null && word.length() == 1) {
+                log.write("Слово " + word + " слишком мало.");
+                waitingMessage.editOriginal(":x: Слово слишком мало для создания!").queue();
+                return;
+            } else if (word != null && word.length() > 50) {
+                log.write("Слово " + word + " слишком большое.");
+                waitingMessage.editOriginal(":x: Слово слишком много для создания!").queue();
                 return;
             }
 
@@ -303,7 +316,7 @@ public class WordsListener extends ListenerAdapter {
                 m = LibraryMode.WordHum_DefHum;
             }
 
-            long cost = WordLibrary.getCost(mode, word, definition, p);
+            long cost = Coster.getCost(mode, word, definition, p);
             TempWord tw = new TempWord(cost, mode, word, definition, m);
             long key = System.currentTimeMillis();
             synchronized (tempWordHashMap) {
@@ -319,7 +332,7 @@ public class WordsListener extends ListenerAdapter {
 
     private void generateWord(ButtonInteractionEvent event, Player p) {
         event.editMessage("Подождите, пожалуйста...").setComponents().queue(waitingMessage -> {
-            long cost = WordLibrary.getCost(TRIPLE, null, null, p);
+            long cost = Coster.getCost(TRIPLE, null, null, p);
             TempWord tw = new TempWord(cost, TRIPLE, null, null, LibraryMode.WordGen_DefGen);
             long key = System.currentTimeMillis();
             synchronized (tempWordHashMap) {
@@ -345,7 +358,18 @@ public class WordsListener extends ListenerAdapter {
                 waitingMessage.editOriginal(":x: Недостаточно средств!").queue();
                 return;
             }
-            ArrayList<String> wordSentences = WordLibrary.makeFourWordSentences(mode, word, definition);
+            ArrayList<String> wordSentences;
+            try {
+                wordSentences = WordLibrary.makeFourWordSentences(mode, word, definition);
+            } catch (NoTokenException e) {
+                waitingMessage.editOriginal(":x: Текущая модель не может придумать вашему слову определение.").queue();
+                p.addBalance(w.cost());
+                return;
+            } catch (Exception e) {
+                waitingMessage.editOriginal(e.getMessage()).queue();
+                p.addBalance(w.cost());
+                return;
+            }
             StringBuilder messageBuilder = new StringBuilder();
             messageBuilder.append(":level_slider: Выберите одно из четырёх слов:\n");
             for (int i = 0; i < 4; i++) {
@@ -374,8 +398,9 @@ public class WordsListener extends ListenerAdapter {
     }
 
     private void madeWord(ButtonInteractionEvent event, Player p, String wordSentence, LibraryMode mode) {
-        Logger.write("[WordsListener] Пользователь " + p + " создал слово " + WordLibrary.getWordie(wordSentence));
-        event.editMessage(":tada: Поздравляем! Теперь это слово - ваше!\n" + wordSentence).setComponents(
+        log.write("Пользователь " + p.getPlayerID() + " создал слово " + WordLibrary.getWordie(wordSentence));
+        String wordSentencee = wordSentence.substring(0, Math.min(wordSentence.length(), 1800));
+        event.editMessage(":tada: Поздравляем! Теперь это слово - ваше!\n" + wordSentencee).setComponents(
                 ActionRow.of(
                         Button.primary(p.getPlayerID() + "_menu", "Меню")
                 )
